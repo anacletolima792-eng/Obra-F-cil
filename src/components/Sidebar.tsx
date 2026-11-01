@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [editingBudget, setEditingBudget] = useState(false);
   const [tempBudget, setTempBudget] = useState(() =>
-    formatCentsToBRL(Math.round(budgetLimit * 100))
+    budgetLimit > 0 ? formatCentsToBRL(Math.round(budgetLimit * 100)) : ''
   );
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(projectName);
@@ -139,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       Sincronização em Tempo Real no Firebase
                     </h3>
                     <p className="mt-1.5 text-xs text-indigo-100/90 leading-relaxed">
-                      Você está visualizando os dados de exemplo da imagem. Faça login com o Google para salvar seus lançamentos na nuvem.
+                      Faça login com o Google para salvar e sincronizar seus lançamentos com segurança na nuvem.
                     </p>
                   </div>
                 </div>
@@ -220,11 +220,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         value={tempName}
                         onChange={(e) => setTempName(e.target.value)}
                         className="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-400"
-                        placeholder="Ex: Reforma da Cozinha"
+                        placeholder="Ex: Reforma da Casa, Lote 12..."
                       />
                       <button
                         onClick={() => {
-                          onUpdateProjectName(tempName.trim() || 'Minha Obra');
+                          onUpdateProjectName(tempName.trim());
                           setEditingName(false);
                         }}
                         className="px-2.5 py-1.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer"
@@ -234,15 +234,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                   ) : (
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-white">{projectName}</span>
+                      <span className={projectName ? "font-bold text-white" : "text-slate-400 italic font-normal"}>
+                        {projectName || 'Não informado'}
+                      </span>
                       <button
                         onClick={() => {
                           setTempName(projectName);
                           setEditingName(true);
                         }}
-                        className="text-amber-400 hover:underline cursor-pointer"
+                        className="text-amber-400 hover:underline cursor-pointer font-semibold"
                       >
-                        Alterar
+                        {projectName ? 'Alterar' : 'Definir'}
                       </button>
                     </div>
                   )}
@@ -262,13 +264,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onUpdateBudgetLimit(val);
                           setEditingBudget(false);
                         } else {
-                          setTempBudget(formatCentsToBRL(Math.round(budgetLimit * 100)));
+                          setTempBudget(budgetLimit > 0 ? formatCentsToBRL(Math.round(budgetLimit * 100)) : '');
                           setEditingBudget(true);
                         }
                       }}
                       className="text-[11px] text-amber-400 font-semibold hover:underline cursor-pointer"
                     >
-                      {editingBudget ? 'Confirmar' : 'Definir'}
+                      {editingBudget ? 'Confirmar' : (budgetLimit > 0 ? 'Alterar' : 'Definir')}
                     </button>
                   </div>
 
@@ -292,7 +294,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <div className="flex justify-between text-xs font-extrabold mb-1">
                         <span className="text-slate-300">Gasto: {formatCurrencyBRL(grandTotal)}</span>
                         <span className={isOverBudget ? 'text-rose-400' : 'text-amber-400'}>
-                          {budgetLimit > 0 ? formatCurrencyBRL(budgetLimit) : 'Sem limite'}
+                          {budgetLimit > 0 ? formatCurrencyBRL(budgetLimit) : 'Não definido'}
                         </span>
                       </div>
 

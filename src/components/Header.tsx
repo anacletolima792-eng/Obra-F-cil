@@ -62,7 +62,9 @@ export const Header: React.FC<HeaderProps> = ({
               title="Clique para alterar o nome da obra nas configurações"
               className="flex items-center gap-1 text-xs sm:text-[13px] text-amber-400 font-semibold truncate hover:text-amber-300 transition-colors text-left cursor-pointer mt-0.5"
             >
-              <span className="truncate max-w-[180px] sm:max-w-xs">{projectName || 'Minha Obra'}</span>
+              <span className={`truncate max-w-[180px] sm:max-w-xs ${!projectName ? 'opacity-80 italic' : ''}`}>
+                {projectName || 'Nome da Obra / Local'}
+              </span>
             </button>
           </div>
         </div>

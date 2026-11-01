@@ -59,12 +59,28 @@ export default function App() {
 
   // Sidebar and Configuration States
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [projectName, setProjectName] = useState<string>(
-    () => localStorage.getItem('obra_facil_project_name') || 'Minha Obra'
-  );
-  const [budgetLimit, setBudgetLimit] = useState<number>(
-    () => Number(localStorage.getItem('obra_facil_budget_limit')) || 5000
-  );
+  const [projectName, setProjectName] = useState<string>(() => {
+    const saved = localStorage.getItem('obra_facil_project_name');
+    if (saved && saved !== 'Minha Obra') {
+      return saved;
+    }
+    if (saved === 'Minha Obra') {
+      localStorage.removeItem('obra_facil_project_name');
+    }
+    return '';
+  });
+  const [budgetLimit, setBudgetLimit] = useState<number>(() => {
+    const saved = localStorage.getItem('obra_facil_budget_limit');
+    if (saved !== null) {
+      const num = Number(saved);
+      if (num === 5000) {
+        localStorage.removeItem('obra_facil_budget_limit');
+        return 0;
+      }
+      return isNaN(num) ? 0 : num;
+    }
+    return 0;
+  });
 
   // Modal States
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -378,15 +394,24 @@ export default function App() {
   });
 
   const handleUpdateProjectName = (name: string) => {
-    setProjectName(name);
-    localStorage.setItem('obra_facil_project_name', name);
-    showNotice('Nome da obra atualizado!');
+    const trimmed = name.trim();
+    setProjectName(trimmed);
+    if (trimmed) {
+      localStorage.setItem('obra_facil_project_name', trimmed);
+    } else {
+      localStorage.removeItem('obra_facil_project_name');
+    }
+    showNotice(trimmed ? 'Nome da obra atualizado!' : 'Nome da obra redefinido.');
   };
 
   const handleUpdateBudgetLimit = (limit: number) => {
     setBudgetLimit(limit);
-    localStorage.setItem('obra_facil_budget_limit', limit.toString());
-    showNotice('Limite de orçamento atualizado!');
+    if (limit > 0) {
+      localStorage.setItem('obra_facil_budget_limit', limit.toString());
+    } else {
+      localStorage.removeItem('obra_facil_budget_limit');
+    }
+    showNotice(limit > 0 ? 'Limite de orçamento atualizado!' : 'Limite de orçamento desativado.');
   };
 
   const handleRestoreSampleData = async () => {
