@@ -12,68 +12,7 @@ export interface Expense {
   updatedAt?: string;
 }
 
-export const INITIAL_IMAGE_EXPENSES: Omit<Expense, 'id' | 'userId' | 'createdAt'>[] = [
-  {
-    description: 'Diária do Pedreiro',
-    amount: 250.00,
-    category: 'mao_de_obra',
-    date: '29/10/2026',
-  },
-  {
-    description: 'ELETRICISTA',
-    amount: 250.00,
-    category: 'mao_de_obra',
-    date: '31/10/2026',
-  },
-  {
-    description: 'Cimento',
-    amount: 210.00,
-    category: 'material',
-    date: '31/10/2026',
-  },
-  {
-    description: 'Sacos de Cimento (10x)',
-    amount: 350.00,
-    category: 'material',
-    date: '28/10/2026',
-  },
-  {
-    description: 'Diária do Pedreiro',
-    amount: 250.00,
-    category: 'mao_de_obra',
-    date: '29/10/2026',
-  },
-  {
-    description: 'Cimento',
-    amount: 210.00,
-    category: 'material',
-    date: '31/10/2026',
-  },
-  {
-    description: 'Sacos de Cimento (10x)',
-    amount: 350.00,
-    category: 'material',
-    date: '28/10/2026',
-  },
-  {
-    description: 'ELETRICISTA',
-    amount: 250.00,
-    category: 'mao_de_obra',
-    date: '31/10/2026',
-  },
-  {
-    description: '10 CIMENTO, 5 TROPICAL, 5 SC DE AREIA, 10 SACO DE BRITA, 1 LAPIS PEDREIRO',
-    amount: 350.00,
-    category: 'material',
-    date: '31/10/2026',
-  },
-  {
-    description: '10 CIMENTO, 5 TROPICAL, 5 SC DE AREIA, 10 SACO DE BRITA, 1 LAPIS PEDREIRO',
-    amount: 350.00,
-    category: 'material',
-    date: '31/10/2026',
-  },
-];
+export const INITIAL_IMAGE_EXPENSES: Omit<Expense, 'id' | 'userId' | 'createdAt'>[] = [];
 
 export function formatCurrencyBRL(value: number): string {
   return new Intl.NumberFormat('pt-BR', {

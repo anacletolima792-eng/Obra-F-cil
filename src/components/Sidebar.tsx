@@ -5,7 +5,6 @@ import {
   User,
   LogOut,
   LogIn,
-  RotateCcw,
   Trash2,
   FileSpreadsheet,
   Settings,
@@ -31,7 +30,7 @@ interface SidebarProps {
   user: FirebaseUser | null;
   onSignIn: () => void;
   onSignOut: () => void;
-  onRestoreSampleData: () => void;
+  onRestoreSampleData?: () => void;
   onClearAllData: () => void;
   onExportCSV: () => void;
   grandTotal: number;
@@ -48,7 +47,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   user,
   onSignIn,
   onSignOut,
-  onRestoreSampleData,
   onClearAllData,
   onExportCSV,
   grandTotal,
@@ -322,28 +320,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </h4>
 
               <div className="space-y-2">
-                {/* Restaurar dados de exemplo da imagem */}
-                <button
-                  onClick={() => {
-                    const confirmRestore = window.confirm(
-                      'Deseja restaurar os 10 lançamentos de exemplo da imagem (Total R$ 2.820,00)?'
-                    );
-                    if (confirmRestore) {
-                      onRestoreSampleData();
-                      onClose();
-                    }
-                  }}
-                  className="w-full flex items-center justify-between p-3 bg-[#151f30] hover:bg-[#1a263c] rounded-xl border border-slate-800 transition-colors text-xs font-semibold text-slate-200 cursor-pointer"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <RotateCcw className="w-4 h-4 text-amber-400" />
-                    <span>Restaurar Gastos da Imagem</span>
-                  </div>
-                  <span className="text-[10px] bg-amber-400/10 text-amber-300 px-2 py-0.5 rounded-md font-bold">
-                    10 itens
-                  </span>
-                </button>
-
                 {/* Exportar CSV */}
                 <button
                   onClick={() => {

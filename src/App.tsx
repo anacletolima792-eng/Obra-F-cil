@@ -100,25 +100,24 @@ export default function App() {
   // 3. Real-time Firestore Sync when User is Authenticated, or Demo Seed when Guest
   useEffect(() => {
     if (!user) {
-      // Load initial replica data matching user screenshot
+      // Load saved guest expenses if any (filtering out any previous demo seed data)
       const localStored = localStorage.getItem('obra_facil_guest_expenses');
       if (localStored) {
         try {
-          setExpenses(JSON.parse(localStored));
+          const parsed = JSON.parse(localStored);
+          const filtered = Array.isArray(parsed)
+            ? parsed.filter((item: Expense) => !item.id?.startsWith('demo_'))
+            : [];
+          setExpenses(filtered);
+          localStorage.setItem('obra_facil_guest_expenses', JSON.stringify(filtered));
           return;
         } catch {
-          // fallback to seed
+          // fallback to empty
         }
       }
 
-      // Default sample matching the user's provided screenshot
-      const sampleList: Expense[] = INITIAL_IMAGE_EXPENSES.map((item, idx) => ({
-        ...item,
-        id: `demo_${idx + 1}`,
-        userId: 'guest',
-        createdAt: new Date().toISOString(),
-      }));
-      setExpenses(sampleList);
+      // Default to clean empty list
+      setExpenses([]);
       return;
     }
 
@@ -517,38 +516,6 @@ export default function App() {
           <div className="fixed top-16 right-4 z-50 bg-slate-900 text-amber-300 border border-slate-700 shadow-xl rounded-xl px-3.5 py-2 text-xs font-semibold flex items-center gap-2 animate-in slide-in-from-top-4 duration-200">
             <CheckCircle className="w-4 h-4 text-emerald-400" />
             <span>{feedbackNotice}</span>
-          </div>
-        )}
-
-        {/* User Authenticated with Empty Collection Banner */}
-        {user && expenses.length === 0 && !isSyncing && (
-          <div className="mb-3 bg-amber-50 border border-amber-200 rounded-xl p-3 sm:p-4 text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2.5">
-              <Sparkles className="w-5 h-5 text-amber-600 shrink-0" />
-              <div>
-                <h4 className="text-xs sm:text-sm font-bold">Seu banco de dados do Firebase está pronto!</h4>
-                <p className="text-[11px] text-amber-800">
-                  Deseja carregar os 10 gastos exatos da imagem para começar ou lançar seus próprios gastos?
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleSeedToFirebase}
-                className="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer shadow-2xs"
-              >
-                Carregar Dados da Imagem
-              </button>
-              <button
-                onClick={() => {
-                  setEditingExpense(null);
-                  setIsModalOpen(true);
-                }}
-                className="bg-white border border-amber-300 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-lg transition-all hover:bg-amber-100 cursor-pointer"
-              >
-                + Lançar Novo Gasto
-              </button>
-            </div>
           </div>
         )}
 
