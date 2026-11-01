@@ -61,7 +61,7 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
       {/* Right section: Amount and action buttons */}
       <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100">
         {/* Formatted amount */}
-        <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+        <span className="text-[13px] sm:text-sm font-black text-slate-900 tracking-tight">
           {formatCurrencyBRL(expense.amount)}
         </span>
 

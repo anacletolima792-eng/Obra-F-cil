@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Camera, Plus, Check, Trash2, Calendar, Loader2 } from 'lucide-react';
+import { X, Camera, Plus, Check, Trash2, Calendar, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Expense, ExpenseCategory, parseBRLInput, formatCurrencyBRL } from '../types';
 
 interface ExpenseModalProps {
@@ -13,6 +13,44 @@ interface ExpenseModalProps {
     receiptUrl?: string;
   }) => Promise<void>;
   editingExpense?: Expense | null;
+}
+
+const MONTH_NAMES = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+];
+
+const WEEKDAY_NAMES = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+// Parses DD/MM/YYYY into a valid Date object (local time)
+function parseDateString(str: string): Date {
+  if (!str) return new Date();
+  const parts = str.trim().split('/');
+  if (parts.length === 3) {
+    const d = parseInt(parts[0], 10);
+    const m = parseInt(parts[1], 10) - 1;
+    const y = parseInt(parts[2], 10);
+    if (!isNaN(d) && !isNaN(m) && !isNaN(y) && d >= 1 && d <= 31 && m >= 0 && m <= 11) {
+      return new Date(y, m, d);
+    }
+  }
+  return new Date();
+}
+
+// Formats a Date object as DD/MM/YYYY
+function formatDateToString(d: Date): string {
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+// Formats cents to masked BRL string "X.XXX,XX"
+function formatCentsToBRL(cents: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(cents / 100);
 }
 
 export const ExpenseModal: React.FC<ExpenseModalProps> = ({
@@ -30,32 +68,75 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
   const [errorMessage, setErrorMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Calendar interactive dropdown state
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [calendarViewDate, setCalendarViewDate] = useState<Date>(new Date());
+  const calendarContainerRef = useRef<HTMLDivElement>(null);
+
   // Format today's date as DD/MM/YYYY
   const getTodayFormatted = () => {
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const yyyy = today.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
+    return formatDateToString(new Date());
   };
 
   useEffect(() => {
     if (editingExpense) {
       setDescription(editingExpense.description);
-      // Format number to R$ string without prefix for easier editing
-      setAmountStr(editingExpense.amount.toFixed(2).replace('.', ','));
+      // Format number to masked R$ string (e.g., "250,00")
+      setAmountStr(formatCentsToBRL(Math.round(editingExpense.amount * 100)));
       setCategory(editingExpense.category);
-      setDate(editingExpense.date || getTodayFormatted());
+      const initialDate = editingExpense.date || getTodayFormatted();
+      setDate(initialDate);
+      setCalendarViewDate(parseDateString(initialDate));
       setReceiptUrl(editingExpense.receiptUrl);
     } else {
       setDescription('');
       setAmountStr('');
       setCategory('material');
-      setDate(getTodayFormatted());
+      const today = getTodayFormatted();
+      setDate(today);
+      setCalendarViewDate(new Date());
       setReceiptUrl(undefined);
     }
     setErrorMessage('');
+    setIsCalendarOpen(false);
   }, [editingExpense, isOpen]);
+
+  // Input mask for Brazilian currency (BRL): automatically formats digits as typing
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    // Extract only digits
+    const digits = raw.replace(/\D/g, '');
+    if (!digits) {
+      setAmountStr('');
+      return;
+    }
+    const cents = parseInt(digits, 10);
+    if (isNaN(cents) || cents === 0) {
+      setAmountStr('');
+      return;
+    }
+    // Limit to max 999.999.999,99
+    if (cents > 99999999999) return;
+    setAmountStr(formatCentsToBRL(cents));
+  };
+
+  // Close calendar popup when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        calendarContainerRef.current &&
+        !calendarContainerRef.current.contains(event.target as Node)
+      ) {
+        setIsCalendarOpen(false);
+      }
+    }
+    if (isCalendarOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCalendarOpen]);
 
   if (!isOpen) return null;
 
@@ -169,7 +250,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             </div>
           )}
 
-          {/* 1. Categoria (Em primeiro, acima de Descrição) */}
+          {/* 1. Categoria */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               Categoria
@@ -205,7 +286,151 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             </div>
           </div>
 
-          {/* 2. Descrição */}
+          {/* 2. Data do Gasto (Entre Categoria e Descrição) */}
+          <div ref={calendarContainerRef} className="relative">
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              Data do Gasto
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={date}
+                readOnly
+                onClick={() => {
+                  setIsCalendarOpen((prev) => !prev);
+                  setCalendarViewDate(parseDateString(date));
+                }}
+                placeholder="DD/MM/AAAA"
+                className="w-full pl-4 pr-11 py-2.5 bg-[#f8fafc] hover:bg-slate-100/70 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer font-medium"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCalendarOpen((prev) => !prev);
+                  setCalendarViewDate(parseDateString(date));
+                }}
+                title="Abrir calendário para escolher o dia"
+                className="w-8 h-8 rounded-lg hover:bg-slate-200/80 text-slate-500 hover:text-slate-800 absolute right-1.5 top-1.5 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <Calendar className="w-4 h-4 text-slate-600" />
+              </button>
+            </div>
+
+            {/* Interactive Calendar Dropdown Popup */}
+            {isCalendarOpen && (
+              <div className="absolute top-full left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3.5 animate-in fade-in zoom-in-95 duration-150">
+                
+                {/* Calendar Month Navigation Header */}
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCalendarViewDate(
+                        new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() - 1, 1)
+                      );
+                    }}
+                    className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    title="Mês anterior"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 capitalize select-none">
+                    {MONTH_NAMES[calendarViewDate.getMonth()]} de {calendarViewDate.getFullYear()}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCalendarViewDate(
+                        new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + 1, 1)
+                      );
+                    }}
+                    className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    title="Próximo mês"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Weekday column names */}
+                <div className="grid grid-cols-7 gap-1 text-center mb-1 select-none">
+                  {WEEKDAY_NAMES.map((dayName, idx) => (
+                    <span key={idx} className="text-[10px] font-bold text-slate-400 uppercase py-0.5">
+                      {dayName}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Days matrix */}
+                <div className="grid grid-cols-7 gap-1">
+                  {/* Blank leading slots */}
+                  {Array.from({
+                    length: new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth(), 1).getDay(),
+                  }).map((_, i) => (
+                    <div key={`empty-${i}`} className="h-7" />
+                  ))}
+
+                  {/* Month days */}
+                  {Array.from({
+                    length: new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + 1, 0).getDate(),
+                  }).map((_, i) => {
+                    const dayNum = i + 1;
+                    const thisDayDate = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth(), dayNum);
+                    const thisDayStr = formatDateToString(thisDayDate);
+                    const isSelected = date === thisDayStr;
+                    const isToday = formatDateToString(new Date()) === thisDayStr;
+
+                    return (
+                      <button
+                        key={dayNum}
+                        type="button"
+                        onClick={() => {
+                          setDate(thisDayStr);
+                          setIsCalendarOpen(false);
+                        }}
+                        className={`h-7 w-full rounded-lg text-xs font-bold flex items-center justify-center transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-amber-500 text-slate-950 font-black shadow-xs ring-2 ring-amber-300'
+                            : isToday
+                            ? 'bg-blue-50 text-blue-700 border border-blue-300 hover:bg-blue-100'
+                            : 'text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {dayNum}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Quick actions at bottom: Hoje & Fechar */}
+                <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-100 text-xs select-none">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const today = new Date();
+                      setDate(formatDateToString(today));
+                      setCalendarViewDate(today);
+                      setIsCalendarOpen(false);
+                    }}
+                    className="text-blue-600 hover:text-blue-800 font-bold px-2 py-0.5 rounded-md hover:bg-blue-50 transition-colors cursor-pointer"
+                  >
+                    Hoje
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsCalendarOpen(false)}
+                    className="text-slate-500 hover:text-slate-700 font-medium px-2 py-0.5 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    Fechar
+                  </button>
+                </div>
+
+              </div>
+            )}
+          </div>
+
+          {/* 3. Descrição */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               Descrição
@@ -220,37 +445,24 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             />
           </div>
 
-          {/* 3. Valor em R$ */}
+          {/* 4. Valor em R$ com Máscara de Entrada (Input Mask) */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               Valor em R$
             </label>
-            <div className="relative">
+            <div className="relative flex items-center">
+              <span className="absolute left-4 text-sm font-bold text-slate-500 pointer-events-none select-none">
+                R$
+              </span>
               <input
                 type="text"
+                inputMode="numeric"
                 value={amountStr}
-                onChange={(e) => setAmountStr(e.target.value)}
-                placeholder="Valor em R$ (ex: 350,00)"
+                onChange={handleAmountChange}
+                placeholder="0,00"
                 required
-                className="w-full px-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 font-bold placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
-            </div>
-          </div>
-
-          {/* Date Picker Input (subtle) */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Data do Gasto
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                placeholder="DD/MM/AAAA (ex: 31/10/2026)"
-                className="w-full px-4 py-2.5 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
-              <Calendar className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
             </div>
           </div>
 
