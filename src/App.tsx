@@ -152,9 +152,18 @@ export default function App() {
     try {
       await signInWithPopup(auth, googleProvider);
       showNotice('Conectado com sucesso ao Firebase!');
-    } catch (error) {
-      console.error('Sign-in error:', error);
-      alert('Não foi possível realizar o login com o Google. Tente novamente.');
+    } catch (error: any) {
+      const code = error?.code || '';
+      // User closed the popup intentionally or switched tabs; not an application error
+      if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        return;
+      }
+      if (code === 'auth/popup-blocked') {
+        showNotice('O navegador bloqueou a janela de login. Por favor, permita pop-ups.');
+        return;
+      }
+      console.warn('Sign-in status:', error?.message || error);
+      showNotice('Não foi possível concluir o login com o Google. Tente novamente.');
     }
   };
 
