@@ -139,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       Sincronização em Tempo Real no Firebase
                     </h3>
                     <p className="mt-1.5 text-xs text-indigo-100/90 leading-relaxed">
-                      Faça login com o Google para salvar e sincronizar seus lançamentos com segurança na nuvem.
+                      Entre com seu e-mail e senha (ou Google) para salvar e sincronizar seus lançamentos com segurança na nuvem.
                     </p>
                   </div>
                 </div>

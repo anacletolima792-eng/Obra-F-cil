@@ -45,12 +45,14 @@ import { ExpenseItem } from './components/ExpenseItem';
 import { ExpenseModal } from './components/ExpenseModal';
 import { ReceiptViewerModal } from './components/ReceiptViewerModal';
 import { Sidebar } from './components/Sidebar';
+import { AuthModal } from './components/AuthModal';
 
 export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [isFirebaseConnected, setIsFirebaseConnected] = useState<boolean>(true);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
 
   // In-memory / Realtime Expenses list
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -176,10 +178,14 @@ export default function App() {
   }, [user]);
 
   // Auth Handlers
-  const handleSignIn = async () => {
+  const handleOpenAuthModal = () => {
+    setIsAuthModalOpen(true);
+  };
+
+  const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      showNotice('Conectado com sucesso ao Firebase!');
+      showNotice('Conectado com sucesso com o Google!');
     } catch (error: any) {
       const code = error?.code || '';
       const currentHost = window.location.hostname;
@@ -192,7 +198,7 @@ export default function App() {
       if (code === 'auth/unauthorized-domain') {
         setAuthErrorModal({
           title: 'Domínio Não Autorizado no Firebase',
-          message: 'Para o login do Google funcionar no seu celular ou neste link, você precisa adicionar este domínio na lista de Domínios Autorizados no Firebase Console do projeto obra-facil-d5691 (Authentication > Settings > Authorized domains).',
+          message: 'Para o login do Google funcionar no seu celular ou neste link, você precisa adicionar este domínio na lista de Domínios Autorizados no Firebase Console do projeto obra-facil-d5691 (Authentication > Settings > Authorized domains). Você também pode entrar usando seu E-mail e Senha cadastrados.',
           code: code,
           domainToCopy: currentHost,
           linkUrl: 'https://console.firebase.google.com/project/obra-facil-d5691/authentication/settings',
@@ -204,7 +210,7 @@ export default function App() {
       if (code === 'auth/operation-not-allowed') {
         setAuthErrorModal({
           title: 'Login com Google Desativado',
-          message: 'O provedor de login com o Google ainda não foi ativado no Firebase Console do projeto obra-facil-d5691. Acesse o console e ative o Google em Authentication > Sign-in method.',
+          message: 'O provedor Google ainda não foi ativado no Firebase Console do projeto obra-facil-d5691. No entanto, o login por E-mail e Senha já está ativado e disponível!',
           code: code,
           linkUrl: 'https://console.firebase.google.com/project/obra-facil-d5691/authentication/providers',
           linkText: 'Ativar Google no Firebase Console',
@@ -215,7 +221,7 @@ export default function App() {
       if (code === 'auth/popup-blocked') {
         setAuthErrorModal({
           title: 'Pop-up Bloqueado no Celular',
-          message: 'O navegador do seu celular bloqueou a janela pop-up de login do Google. Para entrar, toque no aviso de pop-up bloqueado na barra de endereço ou permita pop-ups nas configurações do navegador do celular.',
+          message: 'O navegador do seu celular bloqueou a janela pop-up de login do Google. Você pode permitir pop-ups nas configurações ou usar o login por E-mail e Senha diretamente.',
           code: code,
         });
         return;
@@ -223,8 +229,8 @@ export default function App() {
 
       console.warn('Sign-in status:', error?.message || error);
       setAuthErrorModal({
-        title: 'Não foi possível concluir o login',
-        message: error?.message || 'Ocorreu uma falha ao tentar autenticar com o Google.',
+        title: 'Não foi possível concluir o login com o Google',
+        message: error?.message || 'Ocorreu uma falha ao tentar autenticar com o Google. Experimente entrar com E-mail e Senha.',
         code: code,
       });
     }
@@ -247,7 +253,7 @@ export default function App() {
   // Seed sample expenses directly to Firestore for authenticated user
   const handleSeedToFirebase = async () => {
     if (!user) {
-      handleSignIn();
+      handleOpenAuthModal();
       return;
     }
 
@@ -478,7 +484,7 @@ export default function App() {
         <Header
           user={user}
           isFirebaseConnected={isFirebaseConnected}
-          onSignIn={handleSignIn}
+          onSignIn={handleOpenAuthModal}
           onSignOut={handleSignOut}
           isSyncing={isSyncing}
           onOpenSidebar={() => setIsSidebarOpen(true)}
@@ -622,7 +628,7 @@ export default function App() {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         user={user}
-        onSignIn={handleSignIn}
+        onSignIn={handleOpenAuthModal}
         onSignOut={handleSignOut}
         onRestoreSampleData={handleRestoreSampleData}
         onClearAllData={handleClearAllData}
@@ -633,6 +639,14 @@ export default function App() {
         onUpdateProjectName={handleUpdateProjectName}
         budgetLimit={budgetLimit}
         onUpdateBudgetLimit={handleUpdateBudgetLimit}
+      />
+
+      {/* Email / Password & Google Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(msg) => showNotice(msg)}
+        onGoogleSignIn={handleGoogleSignIn}
       />
 
       {/* Auth Error Guidance Modal */}
