@@ -404,7 +404,7 @@ export default function App() {
         />
 
         {/* Top Summary Cards and Histórico Toolbar pinned to top */}
-        <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 pt-1.5 pb-2.5 bg-[#f3f6f9]">
+        <div className="max-w-4xl w-full mx-auto px-3 sm:px-6 pt-1 pb-1.5 bg-[#f3f6f9]">
           {/* Summary Cards: Material, Mão de Obra, Total */}
           <SummaryCards
             materialTotal={materialTotal}
@@ -413,7 +413,7 @@ export default function App() {
           />
 
           {/* Subheader: Quick search input and Category Filter with count */}
-          <div className="flex items-center justify-between gap-3 pt-1">
+          <div className="flex items-center justify-between gap-2.5 pt-0.5">
             
             {/* Quick search input */}
             <div className="relative flex-1 max-w-xs">
@@ -422,9 +422,9 @@ export default function App() {
                 placeholder="Buscar lançamento..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs transition-all"
+                className="w-full pl-7 pr-3 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs transition-all"
               />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5 pointer-events-none" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2 pointer-events-none" />
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
@@ -433,13 +433,13 @@ export default function App() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-white border border-slate-200 text-slate-800 text-xs sm:text-sm font-bold py-1.5 pl-3.5 pr-8 rounded-xl shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="appearance-none bg-white border border-slate-200 text-slate-800 text-xs font-bold py-1 pl-2.5 pr-7 rounded-lg shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
                   <option value="todos">Todos ({totalCount})</option>
                   <option value="material">Material ({materialCount})</option>
                   <option value="mao_de_obra">Mão de Obra ({laborCount})</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-500">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                     <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                   </svg>
@@ -452,11 +452,11 @@ export default function App() {
       </div>
 
       {/* Main Scrollable Content Area */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-4 pb-24">
+      <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-6 py-2.5 pb-24">
         
         {/* Floating Notification Toast */}
         {feedbackNotice && (
-          <div className="fixed top-24 right-4 z-50 bg-slate-900 text-amber-300 border border-slate-700 shadow-xl rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-in slide-in-from-top-4 duration-200">
+          <div className="fixed top-16 right-4 z-50 bg-slate-900 text-amber-300 border border-slate-700 shadow-xl rounded-xl px-3.5 py-2 text-xs font-semibold flex items-center gap-2 animate-in slide-in-from-top-4 duration-200">
             <CheckCircle className="w-4 h-4 text-emerald-400" />
             <span>{feedbackNotice}</span>
           </div>
@@ -464,12 +464,12 @@ export default function App() {
 
         {/* User Authenticated with Empty Collection Banner */}
         {user && expenses.length === 0 && !isSyncing && (
-          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-5 text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Sparkles className="w-6 h-6 text-amber-600 shrink-0" />
+          <div className="mb-3 bg-amber-50 border border-amber-200 rounded-xl p-3 sm:p-4 text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="w-5 h-5 text-amber-600 shrink-0" />
               <div>
-                <h4 className="text-sm font-bold">Seu banco de dados do Firebase está pronto!</h4>
-                <p className="text-xs text-amber-800">
+                <h4 className="text-xs sm:text-sm font-bold">Seu banco de dados do Firebase está pronto!</h4>
+                <p className="text-[11px] text-amber-800">
                   Deseja carregar os 10 gastos exatos da imagem para começar ou lançar seus próprios gastos?
                 </p>
               </div>
@@ -477,7 +477,7 @@ export default function App() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleSeedToFirebase}
-                className="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-xs"
+                className="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer shadow-2xs"
               >
                 Carregar Dados da Imagem
               </button>
@@ -486,7 +486,7 @@ export default function App() {
                   setEditingExpense(null);
                   setIsModalOpen(true);
                 }}
-                className="bg-white border border-amber-300 text-amber-900 text-xs font-bold px-3.5 py-2 rounded-xl transition-all hover:bg-amber-100 cursor-pointer"
+                className="bg-white border border-amber-300 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-lg transition-all hover:bg-amber-100 cursor-pointer"
               >
                 + Lançar Novo Gasto
               </button>
@@ -495,7 +495,7 @@ export default function App() {
         )}
 
         {/* Expenses List */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {filteredExpenses.length > 0 ? (
             filteredExpenses.map((expense) => (
               <ExpenseItem
