@@ -16,7 +16,14 @@ import {
   Info,
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
-import { formatCurrencyBRL } from '../types';
+import { formatCurrencyBRL, parseBRLInput } from '../types';
+
+function formatCentsToBRL(cents: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(cents / 100);
+}
 
 interface SidebarProps {
   isOpen: boolean;
@@ -52,9 +59,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onUpdateBudgetLimit,
 }) => {
   const [editingBudget, setEditingBudget] = useState(false);
-  const [tempBudget, setTempBudget] = useState(budgetLimit.toString());
+  const [tempBudget, setTempBudget] = useState(() =>
+    formatCentsToBRL(Math.round(budgetLimit * 100))
+  );
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(projectName);
+
+  const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    const digits = raw.replace(/\D/g, '');
+    if (!digits) {
+      setTempBudget('');
+      return;
+    }
+    const cents = parseInt(digits, 10);
+    if (isNaN(cents) || cents === 0) {
+      setTempBudget('');
+      return;
+    }
+    if (cents > 99999999999) return;
+    setTempBudget(formatCentsToBRL(cents));
+  };
 
   if (!isOpen) return null;
 
@@ -235,11 +260,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <button
                       onClick={() => {
                         if (editingBudget) {
-                          const val = parseFloat(tempBudget);
-                          onUpdateBudgetLimit(isNaN(val) ? 0 : val);
+                          const val = parseBRLInput(tempBudget);
+                          onUpdateBudgetLimit(val);
                           setEditingBudget(false);
                         } else {
-                          setTempBudget(budgetLimit.toString());
+                          setTempBudget(formatCentsToBRL(Math.round(budgetLimit * 100)));
                           setEditingBudget(true);
                         }
                       }}
@@ -250,13 +275,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
 
                   {editingBudget ? (
-                    <input
-                      type="number"
-                      value={tempBudget}
-                      onChange={(e) => setTempBudget(e.target.value)}
-                      placeholder="Valor em R$ (ex: 5000)"
-                      className="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-400"
-                    />
+                    <div className="relative flex items-center">
+                      <span className="absolute left-3 text-xs font-bold text-slate-500 pointer-events-none select-none">
+                        R$
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={tempBudget}
+                        onChange={handleBudgetChange}
+                        placeholder="0,00"
+                        autoFocus
+                        className="w-full pl-9 pr-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-amber-400 transition-all"
+                      />
+                    </div>
                   ) : (
                     <div>
                       <div className="flex justify-between text-xs font-extrabold mb-1">

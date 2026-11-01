@@ -7,6 +7,7 @@ interface HeaderProps {
   onSignOut: () => void;
   isSyncing?: boolean;
   onOpenSidebar: () => void;
+  projectName?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -16,6 +17,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSignOut,
   isSyncing,
   onOpenSidebar,
+  projectName,
 }) => {
   return (
     <header className="bg-[#0e1726] text-white py-2 sm:py-2.5 px-3 sm:px-6 shadow-sm border-b border-slate-800">
@@ -40,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Compact Crane Logo */}
-          <div className="w-8 h-8 bg-amber-400 rounded-lg flex items-center justify-center shadow-sm shrink-0 border border-amber-300">
+          <div className="w-8 h-8 sm:w-8.5 sm:h-8.5 bg-amber-400 rounded-lg flex items-center justify-center shadow-sm shrink-0 border border-amber-300">
             <svg
               className="w-5 h-5 text-slate-900"
               viewBox="0 0 24 24"
@@ -50,14 +52,18 @@ export const Header: React.FC<HeaderProps> = ({
             </svg>
           </div>
 
-          {/* Clean inline Title & Subtitle */}
-          <div className="flex items-baseline gap-1.5 sm:gap-2 truncate">
-            <h1 className="text-base sm:text-lg font-black tracking-tight text-white leading-none shrink-0">
+          {/* Brand Title with increased font size & Project Name/Location below */}
+          <div className="flex flex-col justify-center min-w-0">
+            <h1 className="text-[17px] sm:text-[19px] font-black tracking-tight text-white leading-tight">
               Obra Fácil
             </h1>
-            <span className="hidden sm:inline text-xs text-slate-400 font-medium truncate">
-              Controle de Gastos Simplificado
-            </span>
+            <button
+              onClick={onOpenSidebar}
+              title="Clique para alterar o nome da obra nas configurações"
+              className="flex items-center gap-1 text-[11px] sm:text-xs text-amber-400 font-semibold truncate hover:text-amber-300 transition-colors text-left cursor-pointer"
+            >
+              <span className="truncate max-w-[160px] sm:max-w-xs">{projectName || 'Minha Obra'}</span>
+            </button>
           </div>
         </div>
 

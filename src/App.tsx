@@ -401,6 +401,7 @@ export default function App() {
           onSignOut={handleSignOut}
           isSyncing={isSyncing}
           onOpenSidebar={() => setIsSidebarOpen(true)}
+          projectName={projectName}
         />
 
         {/* Top Summary Cards and Histórico Toolbar pinned to top */}
