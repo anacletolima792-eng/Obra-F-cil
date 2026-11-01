@@ -18,24 +18,24 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
   const isLabor = expense.category === 'mao_de_obra';
 
   return (
-    <div className="bg-white rounded-xl p-3 sm:py-3 sm:px-4 border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 transition-all hover:shadow-xs hover:border-slate-300">
+    <div className="bg-white rounded-xl py-2 px-3 sm:py-2.5 sm:px-4 border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-4 transition-all hover:shadow-xs hover:border-slate-300">
       
       {/* Left section: Category badge, date, and description */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           {/* Badge matching screenshot */}
           {isLabor ? (
-            <span className="inline-flex items-center gap-1 bg-[#fef3c7] text-[#92400e] text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-200 shadow-2xs">
+            <span className="inline-flex items-center gap-1 bg-[#fef3c7] text-[#92400e] text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-200 shadow-2xs">
               Mão de Obra
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 bg-[#dbeafe] text-[#1e40af] text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-200 shadow-2xs">
+            <span className="inline-flex items-center gap-1 bg-[#dbeafe] text-[#1e40af] text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-200 shadow-2xs">
               Material
             </span>
           )}
 
           {/* Date */}
-          <span className="text-[11px] sm:text-xs font-medium text-slate-400">
+          <span className="text-[11px] font-medium text-slate-400">
             {expense.date}
           </span>
 
@@ -53,33 +53,33 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
         </div>
 
         {/* Description title */}
-        <h3 className="mt-1 text-sm sm:text-base font-bold text-slate-800 leading-snug tracking-tight break-words">
+        <h3 className="mt-0.5 text-xs min-[380px]:text-sm sm:text-base font-bold text-slate-800 leading-snug tracking-tight break-words">
           {expense.description}
         </h3>
       </div>
 
       {/* Right section: Amount and action buttons */}
-      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+      <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100">
         {/* Formatted amount */}
-        <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+        <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
           {formatCurrencyBRL(expense.amount)}
         </span>
 
         {/* Action buttons (pencil edit & trash delete) */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => onEdit(expense)}
             title="Editar gasto"
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200/90 transition-colors cursor-pointer active:scale-95"
+            className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 border border-slate-200/90 transition-colors cursor-pointer active:scale-95"
           >
-            <Pencil className="w-4 h-4" />
+            <Pencil className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onDelete(expense.id)}
             title="Excluir gasto"
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200/90 hover:border-rose-200 transition-colors cursor-pointer active:scale-95"
+            className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200/90 hover:border-rose-200 transition-colors cursor-pointer active:scale-95"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

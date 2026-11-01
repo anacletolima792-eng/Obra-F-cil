@@ -169,39 +169,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             </div>
           )}
 
-          {/* 1. Descrição */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Descrição
-            </label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Descrição (ex: Sacos de Cimento)"
-              required
-              className="w-full px-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </div>
-
-          {/* 2. Valor em R$ */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Valor em R$
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={amountStr}
-                onChange={(e) => setAmountStr(e.target.value)}
-                placeholder="Valor em R$ (ex: 350,00)"
-                required
-                className="w-full px-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
-            </div>
-          </div>
-
-          {/* 3. Categoria (Two Buttons side by side matching image) */}
+          {/* 1. Categoria (Em primeiro, acima de Descrição) */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               Categoria
@@ -231,9 +199,41 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                     : 'bg-[#f1f5f9] text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                <span className="text-base" role="img" aria-label="Mão de Obra">🪄</span>
+                <span className="text-base" role="img" aria-label="Mão de Obra">👷</span>
                 <span>Mão de Obra</span>
               </button>
+            </div>
+          </div>
+
+          {/* 2. Descrição */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              Descrição
+            </label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descrição (ex: Sacos de Cimento)"
+              required
+              className="w-full px-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
+
+          {/* 3. Valor em R$ */}
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              Valor em R$
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={amountStr}
+                onChange={(e) => setAmountStr(e.target.value)}
+                placeholder="Valor em R$ (ex: 350,00)"
+                required
+                className="w-full px-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
             </div>
           </div>
 
