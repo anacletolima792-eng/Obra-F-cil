@@ -543,10 +543,11 @@ export default function App() {
             setEditingExpense(null);
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 bg-[#f59e0b] hover:bg-[#d97706] text-slate-950 font-black px-5 py-3.5 rounded-full shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer border-2 border-amber-300 group"
+          title="Lançar Novo Gasto"
+          aria-label="Lançar Novo Gasto"
+          className="w-14 h-14 bg-[#f59e0b] hover:bg-[#d97706] text-slate-950 flex items-center justify-center rounded-full shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer border-2 border-amber-300 group"
         >
-          <Plus className="w-5 h-5 stroke-[3] group-hover:rotate-90 transition-transform" />
-          <span className="text-sm font-extrabold tracking-tight">Lançar Novo Gasto</span>
+          <Plus className="w-7 h-7 stroke-[3] group-hover:rotate-90 transition-transform" />
         </button>
       </div>
 
