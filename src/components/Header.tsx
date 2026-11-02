@@ -20,19 +20,19 @@ export const Header: React.FC<HeaderProps> = ({
   projectName,
 }) => {
   return (
-    <header className="bg-[#0e1726] text-white py-3 sm:py-3.5 px-4 sm:px-6 shadow-sm border-b border-slate-800">
-      <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
+    <header className="bg-[#172a46] text-white py-3.5 sm:py-4 px-3 sm:px-6 shadow-md border-b border-[#243e68]">
+      <div className="max-w-4xl mx-auto flex items-center justify-between gap-2.5 sm:gap-4 flex-nowrap">
         
         {/* Left: Menu button + Brand Logo + Title + Project Name */}
-        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+        <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
           {/* Hamburger Menu button */}
           <button
             onClick={onOpenSidebar}
             title="Abrir Menu e Configurações"
-            className="w-9.5 h-9.5 sm:w-10 sm:h-10 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/90 flex items-center justify-center transition-colors cursor-pointer shrink-0 active:scale-95 shadow-2xs"
+            className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-[#223d66]/80 hover:bg-[#2b4c7d] text-slate-200 hover:text-white border border-[#32568c]/70 flex items-center justify-center transition-colors cursor-pointer shrink-0 active:scale-95 shadow-xs"
           >
             <svg
-              className="w-5 h-5 fill-none stroke-current stroke-2"
+              className="w-6 h-6 fill-none stroke-current stroke-[2.2]"
               viewBox="0 0 24 24"
             >
               <line x1="3" y1="6" x2="21" y2="6" strokeLinecap="round" />
@@ -42,9 +42,9 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Crane Logo */}
-          <div className="w-10 h-10 sm:w-11 sm:h-11 bg-amber-400 rounded-xl flex items-center justify-center shadow-md shadow-amber-500/10 shrink-0 border border-amber-300">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 bg-amber-400 rounded-xl flex items-center justify-center shadow-md shadow-amber-500/20 shrink-0 border border-amber-300">
             <svg
-              className="w-6 h-6 sm:w-6.5 sm:h-6.5 text-slate-900"
+              className="w-7 h-7 sm:w-7.5 sm:h-7.5 text-slate-900"
               viewBox="0 0 24 24"
               fill="currentColor"
             >
@@ -54,15 +54,15 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Brand Title & Project Name/Location below */}
           <div className="flex flex-col justify-center min-w-0">
-            <h1 className="text-[19px] sm:text-[22px] font-black tracking-tight text-white leading-tight">
+            <h1 className="text-[21px] sm:text-[24px] font-black tracking-tight text-white leading-tight truncate">
               Obra Fácil
             </h1>
             <button
               onClick={onOpenSidebar}
               title="Clique para alterar o nome da obra nas configurações"
-              className="flex items-center gap-1 text-xs sm:text-[13px] text-amber-400 font-semibold truncate hover:text-amber-300 transition-colors text-left cursor-pointer mt-0.5"
+              className="flex items-center gap-1 text-[13px] sm:text-[14px] text-amber-400 font-semibold truncate hover:text-amber-300 transition-colors text-left cursor-pointer mt-0.5"
             >
-              <span className={`truncate max-w-[180px] sm:max-w-xs ${!projectName ? 'opacity-80 italic' : ''}`}>
+              <span className={`truncate max-w-[150px] sm:max-w-xs ${!projectName ? 'opacity-85 italic' : ''}`}>
                 {projectName || 'Nome da Obra / Local'}
               </span>
             </button>
@@ -71,24 +71,24 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right: User avatar or quick action */}
         {user ? (
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center shrink-0">
             <button
               onClick={onOpenSidebar}
               title="Abrir perfil e configurações"
-              className="flex items-center gap-2 bg-slate-800/90 hover:bg-slate-700 pl-2 pr-3 py-1.5 rounded-full border border-slate-700 text-xs transition-colors cursor-pointer"
+              className="flex items-center gap-2 bg-[#223d66]/80 hover:bg-[#2b4c7d] pl-2.5 pr-3.5 py-1.5 sm:py-2 rounded-xl border border-[#32568c]/70 text-sm transition-colors cursor-pointer shrink-0"
             >
               {user.photoURL ? (
                 <img
                   src={user.photoURL}
                   alt={user.displayName || 'Usuário'}
-                  className="w-7 h-7 rounded-full ring-1.5 ring-amber-400/80 object-cover"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full ring-1.5 ring-amber-400 object-cover"
                 />
               ) : (
-                <div className="w-7 h-7 rounded-full bg-amber-500 text-slate-900 font-bold text-xs flex items-center justify-center">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-500 text-slate-900 font-bold text-xs sm:text-sm flex items-center justify-center">
                   {(user.displayName || user.email || 'U')[0].toUpperCase()}
                 </div>
               )}
-              <span className="text-white text-xs font-semibold max-w-[120px] truncate hidden sm:inline">
+              <span className="text-white text-xs sm:text-sm font-bold max-w-[110px] truncate hidden sm:inline">
                 {user.displayName?.split(' ')[0] || user.email?.split('@')[0]}
               </span>
             </button>
@@ -96,7 +96,7 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           <button
             onClick={onSignIn}
-            className="text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-1.5 rounded-xl transition-all shadow-xs cursor-pointer active:scale-95"
+            className="text-sm sm:text-[15px] font-extrabold bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all shadow-md cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
           >
             Entrar
           </button>

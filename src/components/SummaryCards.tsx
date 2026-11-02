@@ -42,7 +42,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
       </div>
 
       {/* 3. Total Card */}
-      <div className="bg-[#0e1726] rounded-xl sm:rounded-2xl py-2.5 px-2.5 sm:py-3.5 sm:px-4 shadow-2xs flex flex-col justify-between border-2 border-slate-750 min-w-0 transition-all hover:border-slate-700 hover:shadow-xs">
+      <div className="bg-[#172a46] rounded-xl sm:rounded-2xl py-2.5 px-2.5 sm:py-3.5 sm:px-4 shadow-2xs flex flex-col justify-between border-2 border-[#243e68] min-w-0 transition-all hover:border-[#32568c] hover:shadow-xs">
         <div className="flex items-center gap-1 sm:gap-1.5 text-slate-300 min-w-0">
           <span className="text-xs sm:text-base shrink-0" role="img" aria-label="Total">📊</span>
           <span className="uppercase text-[9px] min-[360px]:text-[10px] sm:text-xs font-extrabold tracking-wider text-slate-200 truncate">

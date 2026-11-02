@@ -96,11 +96,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Drawer */}
       <div className="fixed inset-y-0 left-0 max-w-full flex">
         <aside
-          className="w-screen max-w-sm sm:max-w-md bg-[#0e1726] text-slate-100 shadow-2xl flex flex-col border-r border-slate-800 animate-in slide-in-from-left duration-250 ease-out"
+          className="w-screen max-w-sm sm:max-w-md bg-[#172a46] text-slate-100 shadow-2xl flex flex-col border-r border-[#243e68] animate-in slide-in-from-left duration-250 ease-out"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-[#0b1120]">
+          <div className="px-5 py-4 border-b border-[#243e68] flex items-center justify-between bg-[#132238]">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center">
                 <Settings className="w-5 h-5" />
