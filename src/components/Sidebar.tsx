@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { formatCurrencyBRL, parseBRLInput } from '../types';
+import { capitalizeWords } from './ExpenseModal';
 
 function formatCentsToBRL(cents: number): string {
   return new Intl.NumberFormat('pt-BR', {
@@ -218,13 +219,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <input
                         type="text"
                         value={tempName}
-                        onChange={(e) => setTempName(e.target.value)}
+                        onChange={(e) => setTempName(capitalizeWords(e.target.value))}
+                        autoCapitalize="words"
+                        autoCorrect="on"
                         className="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-400"
                         placeholder="Ex: Reforma da Casa, Lote 12..."
                       />
                       <button
                         onClick={() => {
-                          onUpdateProjectName(tempName.trim());
+                          onUpdateProjectName(capitalizeWords(tempName.trim()));
                           setEditingName(false);
                         }}
                         className="px-2.5 py-1.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer"

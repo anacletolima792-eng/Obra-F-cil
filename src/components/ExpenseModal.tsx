@@ -53,6 +53,11 @@ function formatCentsToBRL(cents: number): string {
   }).format(cents / 100);
 }
 
+// Capitaliza a primeira letra de cada palavra (ex: "sacos de cimento" -> "Sacos De Cimento", "5 cimento" -> "5 Cimento")
+export function capitalizeWords(text: string): string {
+  return text.replace(/(^|[\s\-\/])(\p{L})/gu, (_, prefix, char) => prefix + char.toUpperCase());
+}
+
 export const ExpenseModal: React.FC<ExpenseModalProps> = ({
   isOpen,
   onClose,
@@ -186,7 +191,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
     e.preventDefault();
     setErrorMessage('');
 
-    const trimmedDesc = description.trim();
+    const trimmedDesc = capitalizeWords(description.trim());
     if (!trimmedDesc) {
       setErrorMessage('Por favor informe a descrição do gasto.');
       return;
@@ -430,7 +435,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             )}
           </div>
 
-          {/* 3. Descrição */}
+          {/* 3. Descrição com Capitalização Automática da Primeira Letra das Palavras */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
               Descrição
@@ -438,7 +443,10 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             <input
               type="text"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => setDescription(capitalizeWords(e.target.value))}
+              autoCapitalize="words"
+              autoCorrect="on"
+              spellCheck="true"
               placeholder="Descrição (ex: Sacos de Cimento)"
               required
               className="w-full px-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"

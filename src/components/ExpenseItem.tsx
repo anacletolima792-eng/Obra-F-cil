@@ -53,7 +53,7 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
         </div>
 
         {/* Description title */}
-        <h3 className="mt-1 text-[15px] min-[380px]:text-base sm:text-lg font-bold text-slate-900 leading-snug tracking-tight break-words">
+        <h3 className="mt-0.5 text-sm sm:text-[15px] font-bold text-slate-800 leading-snug tracking-tight break-words">
           {expense.description}
         </h3>
       </div>
@@ -61,7 +61,7 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
       {/* Right section: Amount and action buttons */}
       <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100">
         {/* Formatted amount */}
-        <span className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+        <span className="text-[13px] sm:text-sm font-bold text-slate-900 tracking-tight">
           {formatCurrencyBRL(expense.amount)}
         </span>
 

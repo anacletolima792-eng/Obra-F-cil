@@ -19,6 +19,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { capitalizeWords } from './ExpenseModal';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -288,7 +289,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <input
                       type="text"
                       value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
+                      onChange={(e) => setDisplayName(capitalizeWords(e.target.value))}
+                      autoCapitalize="words"
                       placeholder="Ex: Carlos Silva"
                       className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-400"
                     />
