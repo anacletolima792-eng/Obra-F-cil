@@ -224,15 +224,15 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       
-      {/* Modal Dialog Container matching screenshot */}
+      {/* Modal Dialog Container */}
       <div 
-        className="bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden"
+        className="bg-white dark:bg-[#132238] rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 dark:border-[#223d66] overflow-hidden transition-colors"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-2">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span className="text-xl">➕</span>
               <span>{editingExpense ? 'Editar Gasto' : 'Lançar Novo Gasto'}</span>
             </h2>
@@ -240,7 +240,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
           <button
             onClick={onClose}
             type="button"
-            className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer"
+            className="w-9 h-9 rounded-full bg-slate-100 dark:bg-[#1e3456] hover:bg-slate-200 dark:hover:bg-[#284570] text-slate-500 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -250,14 +250,14 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
         <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
           
           {errorMessage && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl p-3 font-medium">
+            <div className="bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs rounded-xl p-3 font-medium">
               {errorMessage}
             </div>
           )}
 
           {/* 1. Categoria */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
               Categoria
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -267,8 +267,8 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                 onClick={() => setCategory('material')}
                 className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   category === 'material'
-                    ? 'bg-[#dbeafe] text-[#1e40af] border-2 border-blue-400 shadow-xs'
-                    : 'bg-[#f1f5f9] text-slate-600 border border-slate-200 hover:bg-slate-100'
+                    ? 'bg-[#dbeafe] dark:bg-blue-950/80 text-[#1e40af] dark:text-blue-300 border-2 border-blue-400 dark:border-blue-500 shadow-xs'
+                    : 'bg-[#f1f5f9] dark:bg-[#0c1626] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#223d66] hover:bg-slate-100 dark:hover:bg-[#162740]'
                 }`}
               >
                 <span className="text-base" role="img" aria-label="Material">📦</span>
@@ -281,8 +281,8 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                 onClick={() => setCategory('mao_de_obra')}
                 className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   category === 'mao_de_obra'
-                    ? 'bg-[#fef3c7] text-[#92400e] border-2 border-amber-400 shadow-xs'
-                    : 'bg-[#f1f5f9] text-slate-600 border border-slate-200 hover:bg-slate-100'
+                    ? 'bg-[#fef3c7] dark:bg-amber-950/80 text-[#92400e] dark:text-amber-300 border-2 border-amber-400 dark:border-amber-500 shadow-xs'
+                    : 'bg-[#f1f5f9] dark:bg-[#0c1626] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#223d66] hover:bg-slate-100 dark:hover:bg-[#162740]'
                 }`}
               >
                 <span className="text-base" role="img" aria-label="Mão de Obra">👷</span>
@@ -291,9 +291,9 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             </div>
           </div>
 
-          {/* 2. Data do Gasto (Entre Categoria e Descrição) */}
+          {/* 2. Data do Gasto */}
           <div ref={calendarContainerRef} className="relative">
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
               Data do Gasto
             </label>
             <div className="relative">
@@ -306,7 +306,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                   setCalendarViewDate(parseDateString(date));
                 }}
                 placeholder="DD/MM/AAAA"
-                className="w-full pl-4 pr-11 py-2.5 bg-[#f8fafc] hover:bg-slate-100/70 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer font-medium"
+                className="w-full pl-4 pr-11 py-2.5 bg-[#f8fafc] dark:bg-[#0c1626] hover:bg-slate-100/70 dark:hover:bg-[#14233a] border border-slate-200 dark:border-[#223d66] rounded-xl text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer font-medium"
               />
               <button
                 type="button"
@@ -315,18 +315,18 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                   setCalendarViewDate(parseDateString(date));
                 }}
                 title="Abrir calendário para escolher o dia"
-                className="w-8 h-8 rounded-lg hover:bg-slate-200/80 text-slate-500 hover:text-slate-800 absolute right-1.5 top-1.5 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-lg hover:bg-slate-200/80 dark:hover:bg-[#1e3456] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white absolute right-1.5 top-1.5 flex items-center justify-center transition-colors cursor-pointer"
               >
-                <Calendar className="w-4 h-4 text-slate-600" />
+                <Calendar className="w-4 h-4 text-slate-600 dark:text-slate-300" />
               </button>
             </div>
 
             {/* Interactive Calendar Dropdown Popup */}
             {isCalendarOpen && (
-              <div className="absolute top-full left-0 right-0 mt-1.5 z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl p-3.5 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute top-full left-0 right-0 mt-1.5 z-50 bg-white dark:bg-[#101b2d] border border-slate-200 dark:border-[#223d66] rounded-2xl shadow-2xl p-3.5 animate-in fade-in zoom-in-95 duration-150">
                 
                 {/* Calendar Month Navigation Header */}
-                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => {
@@ -334,13 +334,13 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                         new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() - 1, 1)
                       );
                     }}
-                    className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    className="w-7 h-7 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                     title="Mês anterior"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 capitalize select-none">
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 capitalize select-none">
                     {MONTH_NAMES[calendarViewDate.getMonth()]} de {calendarViewDate.getFullYear()}
                   </span>
 
@@ -398,8 +398,8 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                           isSelected
                             ? 'bg-amber-500 text-slate-950 font-black shadow-xs ring-2 ring-amber-300'
                             : isToday
-                            ? 'bg-blue-50 text-blue-700 border border-blue-300 hover:bg-blue-100'
-                            : 'text-slate-700 hover:bg-slate-100'
+                            ? 'bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900/60'
+                            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                         }`}
                       >
                         {dayNum}
@@ -409,7 +409,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                 </div>
 
                 {/* Quick actions at bottom: Hoje & Fechar */}
-                <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-100 text-xs select-none">
+                <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-100 dark:border-slate-800 text-xs select-none">
                   <button
                     type="button"
                     onClick={() => {
@@ -418,14 +418,14 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                       setCalendarViewDate(today);
                       setIsCalendarOpen(false);
                     }}
-                    className="text-blue-600 hover:text-blue-800 font-bold px-2 py-0.5 rounded-md hover:bg-blue-50 transition-colors cursor-pointer"
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-bold px-2 py-0.5 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors cursor-pointer"
                   >
                     Hoje
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsCalendarOpen(false)}
-                    className="text-slate-500 hover:text-slate-700 font-medium px-2 py-0.5 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium px-2 py-0.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                   >
                     Fechar
                   </button>
@@ -437,7 +437,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
 
           {/* 3. Descrição com Capitalização Automática da Primeira Letra das Palavras */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
               Descrição
             </label>
             <input
@@ -449,17 +449,17 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
               spellCheck="true"
               placeholder="Descrição (ex: Sacos de Cimento)"
               required
-              className="w-full px-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-3 bg-[#f8fafc] dark:bg-[#0c1626] border border-slate-200 dark:border-[#223d66] rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
           </div>
 
           {/* 4. Valor em R$ com Máscara de Entrada (Input Mask) */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
               Valor em R$
             </label>
             <div className="relative flex items-center">
-              <span className="absolute left-4 text-sm font-bold text-slate-500 pointer-events-none select-none">
+              <span className="absolute left-4 text-sm font-bold text-slate-500 dark:text-slate-400 pointer-events-none select-none">
                 R$
               </span>
               <input
@@ -469,14 +469,14 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                 onChange={handleAmountChange}
                 placeholder="0,00"
                 required
-                className="w-full pl-11 pr-4 py-3 bg-[#f8fafc] border border-slate-200 rounded-xl text-slate-900 font-bold placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full pl-11 pr-4 py-3 bg-[#f8fafc] dark:bg-[#0c1626] border border-slate-200 dark:border-[#223d66] rounded-xl text-slate-900 dark:text-white font-bold placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
           </div>
 
           {/* 4. Foto da Nota de Venda / Comprovante (Opcional) */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
               Foto da Nota de Venda / Comprovante (Opcional)
             </label>
             
@@ -490,18 +490,18 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
             />
 
             {receiptUrl ? (
-              <div className="relative border-2 border-slate-200 rounded-2xl p-2 bg-slate-50 flex items-center justify-between">
+              <div className="relative border-2 border-slate-200 dark:border-[#223d66] rounded-2xl p-2 bg-slate-50 dark:bg-[#0c1626] flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
                     src={receiptUrl}
                     alt="Comprovante"
-                    className="w-14 h-14 object-cover rounded-xl border border-slate-300 shadow-xs"
+                    className="w-14 h-14 object-cover rounded-xl border border-slate-300 dark:border-slate-700 shadow-xs"
                   />
                   <div>
-                    <span className="text-xs font-bold text-slate-800 block">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
                       Comprovante anexado
                     </span>
-                    <span className="text-[11px] text-emerald-600 font-medium">
+                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
                       ✓ Pronto para salvar
                     </span>
                   </div>
@@ -509,7 +509,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setReceiptUrl(undefined)}
-                  className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                  className="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-lg transition-colors cursor-pointer"
                   title="Remover foto"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -519,7 +519,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full py-4 px-4 border-2 border-dashed border-blue-300 hover:border-blue-500 rounded-2xl bg-blue-50/40 hover:bg-blue-50/80 text-slate-700 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-semibold"
+                className="w-full py-4 px-4 border-2 border-dashed border-blue-300 dark:border-blue-600/60 hover:border-blue-500 rounded-2xl bg-blue-50/40 dark:bg-[#0c1626] hover:bg-blue-50/80 dark:hover:bg-[#122035] text-slate-700 dark:text-slate-300 transition-all flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-semibold"
               >
                 <span className="text-lg">📷</span>
                 <span>Tirar foto da nota ou escolher da galeria</span>
@@ -533,7 +533,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-[#f1f5f9] hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition-colors cursor-pointer text-center"
+              className="w-full py-3 px-4 bg-[#f1f5f9] dark:bg-[#1e3456] hover:bg-slate-200 dark:hover:bg-[#284570] text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors cursor-pointer text-center"
             >
               Cancelar
             </button>

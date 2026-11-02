@@ -1,4 +1,6 @@
 import React from 'react';
+import { Sun, Moon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface HeaderProps {
   user: { uid: string; email?: string | null; displayName?: string | null; photoURL?: string | null } | null;
@@ -19,8 +21,10 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSidebar,
   projectName,
 }) => {
+  const { theme, isDark, toggleTheme } = useTheme();
+
   return (
-    <header className="bg-[#172a46] text-white py-3.5 sm:py-4 px-3 sm:px-6 shadow-md border-b border-[#243e68]">
+    <header className="bg-[#172a46] dark:bg-[#0f1b2d] text-white py-3.5 sm:py-4 px-3 sm:px-6 shadow-md border-b border-[#243e68] dark:border-[#1d3250] transition-colors">
       <div className="max-w-4xl mx-auto flex items-center justify-between gap-2.5 sm:gap-4 flex-nowrap">
         
         {/* Left: Menu button + Brand Logo + Title + Project Name */}
@@ -69,38 +73,54 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Right: User avatar or quick action */}
-        {user ? (
-          <div className="flex items-center shrink-0">
-            <button
-              onClick={onOpenSidebar}
-              title="Abrir perfil e configurações"
-              className="flex items-center gap-2 bg-[#223d66]/80 hover:bg-[#2b4c7d] pl-2.5 pr-3.5 py-1.5 sm:py-2 rounded-xl border border-[#32568c]/70 text-sm transition-colors cursor-pointer shrink-0"
-            >
-              {user.photoURL ? (
-                <img
-                  src={user.photoURL}
-                  alt={user.displayName || 'Usuário'}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full ring-1.5 ring-amber-400 object-cover"
-                />
-              ) : (
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-500 text-slate-900 font-bold text-xs sm:text-sm flex items-center justify-center">
-                  {(user.displayName || user.email || 'U')[0].toUpperCase()}
-                </div>
-              )}
-              <span className="text-white text-xs sm:text-sm font-bold max-w-[110px] truncate hidden sm:inline">
-                {user.displayName?.split(' ')[0] || user.email?.split('@')[0]}
-              </span>
-            </button>
-          </div>
-        ) : (
+        {/* Right: Theme Toggle + User avatar or quick action */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Quick Theme Toggle Button */}
           <button
-            onClick={onSignIn}
-            className="text-sm sm:text-[15px] font-extrabold bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all shadow-md cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
+            onClick={toggleTheme}
+            title={isDark ? "Alternar para tema claro" : "Alternar para tema escuro"}
+            aria-label={isDark ? "Alternar para tema claro" : "Alternar para tema escuro"}
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-[#223d66]/80 hover:bg-[#2b4c7d] text-amber-400 hover:text-amber-300 border border-[#32568c]/70 flex items-center justify-center transition-colors cursor-pointer shrink-0 active:scale-95 shadow-xs"
           >
-            Entrar
+            {isDark ? (
+              <Sun className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-amber-400 fill-amber-400/20" />
+            ) : (
+              <Moon className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-amber-300 fill-amber-300/20" />
+            )}
           </button>
-        )}
+
+          {user ? (
+            <div className="flex items-center shrink-0">
+              <button
+                onClick={onOpenSidebar}
+                title="Abrir perfil e configurações"
+                className="flex items-center gap-2 bg-[#223d66]/80 hover:bg-[#2b4c7d] pl-2.5 pr-3.5 py-1.5 sm:py-2 rounded-xl border border-[#32568c]/70 text-sm transition-colors cursor-pointer shrink-0"
+              >
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt={user.displayName || 'Usuário'}
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full ring-1.5 ring-amber-400 object-cover"
+                  />
+                ) : (
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-500 text-slate-900 font-bold text-xs sm:text-sm flex items-center justify-center">
+                    {(user.displayName || user.email || 'U')[0].toUpperCase()}
+                  </div>
+                )}
+                <span className="text-white text-xs sm:text-sm font-bold max-w-[110px] truncate hidden sm:inline">
+                  {user.displayName?.split(' ')[0] || user.email?.split('@')[0]}
+                </span>
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={onSignIn}
+              className="text-sm sm:text-[15px] font-extrabold bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all shadow-md cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
+            >
+              Entrar
+            </button>
+          )}
+        </div>
 
       </div>
     </header>

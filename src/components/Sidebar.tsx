@@ -13,10 +13,13 @@ import {
   Target,
   CheckCircle2,
   Info,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { formatCurrencyBRL, parseBRLInput } from '../types';
 import { capitalizeWords } from './ExpenseModal';
+import { useTheme } from '../context/ThemeContext';
 
 function formatCentsToBRL(cents: number): string {
   return new Intl.NumberFormat('pt-BR', {
@@ -57,6 +60,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   budgetLimit,
   onUpdateBudgetLimit,
 }) => {
+  const { theme, setTheme } = useTheme();
   const [editingBudget, setEditingBudget] = useState(false);
   const [tempBudget, setTempBudget] = useState(() =>
     budgetLimit > 0 ? formatCentsToBRL(Math.round(budgetLimit * 100)) : ''
@@ -314,6 +318,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+
+            {/* SEÇÃO TEMA / APARÊNCIA */}
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span>Aparência / Tema</span>
+              </h4>
+
+              <div className="grid grid-cols-2 gap-2 bg-[#111927] p-1.5 rounded-xl border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setTheme('light')}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    theme === 'light'
+                      ? 'bg-amber-400 text-slate-950 shadow-xs'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Sun className="w-4 h-4" />
+                  <span>Tema Claro</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTheme('dark')}
+                  className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    theme === 'dark'
+                      ? 'bg-[#223d66] text-amber-300 shadow-xs border border-[#32568c]'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  }`}
+                >
+                  <Moon className="w-4 h-4" />
+                  <span>Tema Escuro</span>
+                </button>
               </div>
             </div>
 

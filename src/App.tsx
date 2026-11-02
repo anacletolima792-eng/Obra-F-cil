@@ -476,10 +476,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f3f6f9] text-slate-800 flex flex-col font-sans selection:bg-amber-200">
+    <div className="min-h-screen bg-[#f3f6f9] dark:bg-[#0b1320] text-slate-800 dark:text-slate-100 flex flex-col font-sans selection:bg-amber-200 transition-colors">
       
       {/* Sticky Fixed Top Section (Header + Summary Cards + Histórico Toolbar) */}
-      <div className="sticky top-0 z-30 bg-[#f3f6f9] border-b border-slate-200/90 shadow-2xs">
+      <div className="sticky top-0 z-30 bg-[#f3f6f9] dark:bg-[#0b1320] border-b border-slate-200/90 dark:border-[#1a2942] shadow-2xs transition-colors">
         {/* Header component */}
         <Header
           user={user}
@@ -492,7 +492,7 @@ export default function App() {
         />
 
         {/* Top Summary Cards and Histórico Toolbar pinned to top */}
-        <div className="max-w-4xl w-full mx-auto px-3 sm:px-6 pt-1 pb-1.5 bg-[#f3f6f9]">
+        <div className="max-w-4xl w-full mx-auto px-3 sm:px-6 pt-1 pb-1.5 bg-[#f3f6f9] dark:bg-[#0b1320] transition-colors">
           {/* Summary Cards: Material, Mão de Obra, Total */}
           <SummaryCards
             materialTotal={materialTotal}
@@ -510,9 +510,9 @@ export default function App() {
                 placeholder="Buscar lançamento..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-7 pr-3 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs transition-all"
+                className="w-full pl-7 pr-3 py-1 bg-white dark:bg-[#132238] border border-slate-200 dark:border-[#223d66] rounded-lg text-xs text-slate-700 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs transition-all"
               />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2 pointer-events-none" />
+              <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 absolute left-2 top-2 pointer-events-none" />
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
@@ -521,13 +521,13 @@ export default function App() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="appearance-none bg-white border border-slate-200 text-slate-800 text-xs font-bold py-1 pl-2.5 pr-7 rounded-lg shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                  className="appearance-none bg-white dark:bg-[#132238] border border-slate-200 dark:border-[#223d66] text-slate-800 dark:text-slate-100 text-xs font-bold py-1 pl-2.5 pr-7 rounded-lg shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                 >
                   <option value="todos">Todos ({totalCount})</option>
                   <option value="material">Material ({materialCount})</option>
                   <option value="mao_de_obra">Mão de Obra ({laborCount})</option>
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500 dark:text-slate-400">
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                     <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                   </svg>
@@ -566,12 +566,12 @@ export default function App() {
               />
             ))
           ) : (
-            <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-300 p-6">
+            <div className="text-center py-12 bg-white dark:bg-[#132238] rounded-3xl border border-dashed border-slate-300 dark:border-[#223d66] p-6 transition-colors">
               <span className="text-3xl block mb-2">📋</span>
-              <h3 className="font-extrabold text-slate-700 text-base">
+              <h3 className="font-extrabold text-slate-700 dark:text-slate-200 text-base">
                 Nenhum gasto encontrado
               </h3>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-slate-400 dark:text-slate-400 mt-1 max-w-sm mx-auto">
                 {searchTerm
                   ? `Nenhum resultado para "${searchTerm}". Tente outro termo.`
                   : 'Comece adicionando seu primeiro lançamento de material ou mão de obra.'}
