@@ -36,6 +36,7 @@ import {
 import {
   Expense,
   ExpenseCategory,
+  Obra,
   INITIAL_IMAGE_EXPENSES,
   formatCurrencyBRL,
 } from './types';
@@ -46,6 +47,7 @@ import { ExpenseModal } from './components/ExpenseModal';
 import { ReceiptViewerModal } from './components/ReceiptViewerModal';
 import { Sidebar } from './components/Sidebar';
 import { AuthModal } from './components/AuthModal';
+import { ObrasModal } from './components/ObrasModal';
 
 export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -71,6 +73,34 @@ export default function App() {
     }
     return '';
   });
+
+  // Multi-obra states matching user request & screenshot
+  const [obras, setObras] = useState<Obra[]>(() => {
+    const saved = localStorage.getItem('obra_facil_obras');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      } catch {}
+    }
+    const legacyName = localStorage.getItem('obra_facil_project_name') || 'Minha Obra';
+    return [
+      {
+        id: 'obra_default',
+        name: legacyName,
+        createdAt: new Date().toISOString(),
+        userId: 'guest',
+      },
+    ];
+  });
+  const [activeObraId, setActiveObraId] = useState<string>(() => {
+    const savedId = localStorage.getItem('obra_facil_active_obra_id');
+    return savedId || 'obra_default';
+  });
+  const [isObrasModalOpen, setIsObrasModalOpen] = useState<boolean>(false);
+
   const [budgetLimit, setBudgetLimit] = useState<number>(() => {
     const saved = localStorage.getItem('obra_facil_budget_limit');
     if (saved !== null) {
@@ -115,7 +145,7 @@ export default function App() {
     return () => unsubscribeAuth();
   }, []);
 
-  // 3. Real-time Firestore Sync when User is Authenticated, or Demo Seed when Guest
+  // 3. Real-time Firestore Sync for Obras and Expenses
   useEffect(() => {
     if (!user) {
       // Load saved guest expenses if any (filtering out any previous demo seed data)
@@ -128,23 +158,79 @@ export default function App() {
             : [];
           setExpenses(filtered);
           localStorage.setItem('obra_facil_guest_expenses', JSON.stringify(filtered));
-          return;
         } catch {
           // fallback to empty
         }
+      } else {
+        setExpenses([]);
       }
 
-      // Default to clean empty list
-      setExpenses([]);
+      // Load saved guest obras
+      const savedObras = localStorage.getItem('obra_facil_obras');
+      if (savedObras) {
+        try {
+          const parsed = JSON.parse(savedObras);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setObras(parsed);
+          }
+        } catch {}
+      }
       return;
     }
 
-    // Authenticated user: Listen to real-time updates from their Firestore subcollection
+    // Authenticated user: Listen to real-time Obras from Firestore
+    const obrasRef = collection(db, 'users', user.uid, 'obras');
+    const unsubscribeObras = onSnapshot(
+      obrasRef,
+      async (snapshot) => {
+        if (snapshot.empty) {
+          // Auto create first default obra for new user
+          const defaultDocRef = doc(db, 'users', user.uid, 'obras', 'obra_default');
+          const initialObra: Obra = {
+            id: 'obra_default',
+            name: projectName || 'Minha Obra',
+            userId: user.uid,
+            createdAt: new Date().toISOString(),
+          };
+          try {
+            await setDoc(defaultDocRef, initialObra);
+            setObras([initialObra]);
+            setActiveObraId(initialObra.id);
+          } catch (e) {
+            console.error('Error creating default obra:', e);
+          }
+        } else {
+          const items: Obra[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            items.push({
+              id: docSnap.id,
+              name: data.name || 'Sem nome',
+              userId: data.userId || user.uid,
+              createdAt: data.createdAt || new Date().toISOString(),
+              budgetLimit: data.budgetLimit,
+              updatedAt: data.updatedAt,
+            });
+          });
+          items.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
+          setObras(items);
+          setActiveObraId((prev) => {
+            if (items.some((o) => o.id === prev)) return prev;
+            return items[0]?.id || 'obra_default';
+          });
+        }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.LIST, `users/${user.uid}/obras`);
+      }
+    );
+
+    // Authenticated user: Listen to real-time Expenses from Firestore
     setIsSyncing(true);
     const expensesRef = collection(db, 'users', user.uid, 'expenses');
     const q = query(expensesRef);
 
-    const unsubscribe = onSnapshot(
+    const unsubscribeExpenses = onSnapshot(
       q,
       (snapshot) => {
         const items: Expense[] = [];
@@ -160,10 +246,10 @@ export default function App() {
             userId: data.userId || user.uid,
             createdAt: data.createdAt || new Date().toISOString(),
             updatedAt: data.updatedAt,
+            obraId: data.obraId,
           });
         });
 
-        // If newly logged in user has an empty database, give option or auto-populate
         setExpenses(items);
         setIsSyncing(false);
         setIsFirebaseConnected(true);
@@ -174,7 +260,10 @@ export default function App() {
       }
     );
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeObras();
+      unsubscribeExpenses();
+    };
   }, [user]);
 
   // Auth Handlers
@@ -281,14 +370,172 @@ export default function App() {
     }
   };
 
-  // Add or Edit Expense
+  // Active Obra resolution
+  const activeObra = obras.find((o) => o.id === activeObraId) || obras[0];
+  const firstObraId = obras[0]?.id;
+
+  // Filter expenses strictly belonging to the active obra
+  // (Expenses with no obraId are associated with the first/default obra for 100% backward compatibility)
+  const currentObraExpenses = expenses.filter((e) => {
+    if (e.obraId) {
+      return e.obraId === activeObra?.id;
+    }
+    return activeObra?.id === firstObraId;
+  });
+
+  // Calculate totals for active obra
+  const materialTotal = currentObraExpenses
+    .filter((e) => e.category === 'material')
+    .reduce((acc, curr) => acc + curr.amount, 0);
+
+  const laborTotal = currentObraExpenses
+    .filter((e) => e.category === 'mao_de_obra')
+    .reduce((acc, curr) => acc + curr.amount, 0);
+
+  const grandTotal = materialTotal + laborTotal;
+
+  // Category counts for active obra
+  const materialCount = currentObraExpenses.filter((e) => e.category === 'material').length;
+  const laborCount = currentObraExpenses.filter((e) => e.category === 'mao_de_obra').length;
+  const totalCount = currentObraExpenses.length;
+
+  // Filtered expenses for active obra
+  const filteredExpenses = currentObraExpenses.filter((e) => {
+    const matchesCategory =
+      selectedCategory === 'todos' ||
+      (selectedCategory === 'material' && e.category === 'material') ||
+      (selectedCategory === 'mao_de_obra' && e.category === 'mao_de_obra');
+
+    const matchesSearch =
+      !searchTerm.trim() ||
+      e.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      e.date.includes(searchTerm);
+
+    return matchesCategory && matchesSearch;
+  });
+
+  // Obra Management Handlers
+  const handleSelectObra = (obraId: string) => {
+    setActiveObraId(obraId);
+    localStorage.setItem('obra_facil_active_obra_id', obraId);
+    const selected = obras.find((o) => o.id === obraId);
+    if (selected) {
+      showNotice(`Obra "${selected.name}" selecionada!`);
+    }
+  };
+
+  const handleAddObra = async (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+
+    const newId = `obra_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const newObra: Obra = {
+      id: newId,
+      name: trimmed,
+      userId: user ? user.uid : 'guest',
+      createdAt: new Date().toISOString(),
+    };
+
+    if (user) {
+      try {
+        await setDoc(doc(db, 'users', user.uid, 'obras', newId), newObra);
+        setActiveObraId(newId);
+        showNotice(`Obra "${trimmed}" adicionada com sucesso!`);
+      } catch (error) {
+        handleFirestoreError(error, OperationType.CREATE, `users/${user.uid}/obras/${newId}`);
+      }
+    } else {
+      const updated = [...obras, newObra];
+      setObras(updated);
+      setActiveObraId(newId);
+      localStorage.setItem('obra_facil_obras', JSON.stringify(updated));
+      localStorage.setItem('obra_facil_active_obra_id', newId);
+      showNotice(`Obra "${trimmed}" adicionada localmente!`);
+    }
+  };
+
+  const handleRenameObra = async (obraId: string, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed) return;
+
+    if (user) {
+      try {
+        await setDoc(
+          doc(db, 'users', user.uid, 'obras', obraId),
+          { name: trimmed, updatedAt: new Date().toISOString() },
+          { merge: true }
+        );
+        showNotice(`Obra renomeada para "${trimmed}".`);
+      } catch (error) {
+        handleFirestoreError(error, OperationType.UPDATE, `users/${user.uid}/obras/${obraId}`);
+      }
+    } else {
+      const updated = obras.map((o) =>
+        o.id === obraId ? { ...o, name: trimmed, updatedAt: new Date().toISOString() } : o
+      );
+      setObras(updated);
+      localStorage.setItem('obra_facil_obras', JSON.stringify(updated));
+      showNotice(`Obra renomeada para "${trimmed}".`);
+    }
+  };
+
+  const handleDeleteObra = async (obraId: string) => {
+    if (obras.length <= 1) {
+      alert('Você precisa manter pelo menos uma obra cadastrada.');
+      return;
+    }
+
+    const obraToDelete = obras.find((o) => o.id === obraId);
+    const nextObra = obras.find((o) => o.id !== obraId);
+    const nextObraId = nextObra ? nextObra.id : 'obra_default';
+
+    if (user) {
+      setIsSyncing(true);
+      try {
+        // Delete all expenses belonging to this obra
+        const toDelete = expenses.filter((e) => e.obraId === obraId);
+        for (const exp of toDelete) {
+          await deleteDoc(doc(db, 'users', user.uid, 'expenses', exp.id));
+        }
+        await deleteDoc(doc(db, 'users', user.uid, 'obras', obraId));
+
+        if (activeObraId === obraId) {
+          setActiveObraId(nextObraId);
+        }
+        showNotice(`Obra "${obraToDelete?.name || ''}" excluída.`);
+      } catch (error) {
+        handleFirestoreError(error, OperationType.DELETE, `users/${user.uid}/obras/${obraId}`);
+      } finally {
+        setIsSyncing(false);
+      }
+    } else {
+      const updatedExpenses = expenses.filter((e) => e.obraId !== obraId);
+      setExpenses(updatedExpenses);
+      localStorage.setItem('obra_facil_guest_expenses', JSON.stringify(updatedExpenses));
+
+      const updatedObras = obras.filter((o) => o.id !== obraId);
+      setObras(updatedObras);
+      localStorage.setItem('obra_facil_obras', JSON.stringify(updatedObras));
+
+      if (activeObraId === obraId) {
+        setActiveObraId(nextObraId);
+        localStorage.setItem('obra_facil_active_obra_id', nextObraId);
+      }
+      showNotice(`Obra "${obraToDelete?.name || ''}" excluída.`);
+    }
+  };
+
+  // Add or Edit Expense (automatically attaches target obraId)
   const handleSaveExpense = async (expenseData: {
     description: string;
     amount: number;
     category: ExpenseCategory;
     date: string;
     receiptUrl?: string;
+    obraId?: string;
   }) => {
+    const targetObraId = expenseData.obraId || activeObraId || (obras[0]?.id || 'obra_default');
+
     if (user) {
       // Save directly to Firestore
       const path = editingExpense
@@ -305,6 +552,7 @@ export default function App() {
           category: expenseData.category,
           date: expenseData.date,
           userId: user.uid,
+          obraId: targetObraId,
           createdAt: editingExpense ? editingExpense.createdAt : new Date().toISOString(),
         };
 
@@ -326,7 +574,7 @@ export default function App() {
       if (editingExpense) {
         const updated = expenses.map((item) =>
           item.id === editingExpense.id
-            ? { ...item, ...expenseData, updatedAt: new Date().toISOString() }
+            ? { ...item, ...expenseData, obraId: targetObraId, updatedAt: new Date().toISOString() }
             : item
         );
         setExpenses(updated);
@@ -337,6 +585,7 @@ export default function App() {
           id: `guest_${Date.now()}`,
           ...expenseData,
           userId: 'guest',
+          obraId: targetObraId,
           createdAt: new Date().toISOString(),
         };
         const updated = [newExpense, ...expenses];
@@ -368,37 +617,6 @@ export default function App() {
     }
   };
 
-  // Calculate totals
-  const materialTotal = expenses
-    .filter((e) => e.category === 'material')
-    .reduce((acc, curr) => acc + curr.amount, 0);
-
-  const laborTotal = expenses
-    .filter((e) => e.category === 'mao_de_obra')
-    .reduce((acc, curr) => acc + curr.amount, 0);
-
-  const grandTotal = materialTotal + laborTotal;
-
-  // Category counts
-  const materialCount = expenses.filter((e) => e.category === 'material').length;
-  const laborCount = expenses.filter((e) => e.category === 'mao_de_obra').length;
-  const totalCount = expenses.length;
-
-  // Filtered expenses
-  const filteredExpenses = expenses.filter((e) => {
-    const matchesCategory =
-      selectedCategory === 'todos' ||
-      (selectedCategory === 'material' && e.category === 'material') ||
-      (selectedCategory === 'mao_de_obra' && e.category === 'mao_de_obra');
-
-    const matchesSearch =
-      !searchTerm.trim() ||
-      e.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.date.includes(searchTerm);
-
-    return matchesCategory && matchesSearch;
-  });
-
   const handleUpdateProjectName = (name: string) => {
     const trimmed = name.trim();
     setProjectName(trimmed);
@@ -428,6 +646,7 @@ export default function App() {
         ...item,
         id: `demo_${Date.now()}_${idx + 1}`,
         userId: 'guest',
+        obraId: activeObraId,
         createdAt: new Date().toISOString(),
       }));
       setExpenses(sampleList);
@@ -440,19 +659,20 @@ export default function App() {
     if (user) {
       setIsSyncing(true);
       try {
-        for (const exp of expenses) {
+        for (const exp of currentObraExpenses) {
           await deleteDoc(doc(db, 'users', user.uid, 'expenses', exp.id));
         }
-        showNotice('Todos os gastos foram removidos do Firebase.');
+        showNotice(`Todos os gastos de "${activeObra?.name || 'Obra'}" foram removidos.`);
       } catch (error) {
         handleFirestoreError(error, OperationType.DELETE, `users/${user.uid}/expenses`);
       } finally {
         setIsSyncing(false);
       }
     } else {
-      setExpenses([]);
-      localStorage.removeItem('obra_facil_guest_expenses');
-      showNotice('Todos os gastos foram removidos.');
+      const remaining = expenses.filter((e) => !currentObraExpenses.some((c) => c.id === e.id));
+      setExpenses(remaining);
+      localStorage.setItem('obra_facil_guest_expenses', JSON.stringify(remaining));
+      showNotice(`Todos os gastos de "${activeObra?.name || 'Obra'}" foram removidos.`);
     }
   };
 
@@ -489,6 +709,8 @@ export default function App() {
           isSyncing={isSyncing}
           onOpenSidebar={() => setIsSidebarOpen(true)}
           projectName={projectName}
+          activeObraName={activeObra?.name || 'Minha Obra'}
+          onOpenObrasModal={() => setIsObrasModalOpen(true)}
         />
 
         {/* Top Summary Cards and Histórico Toolbar pinned to top */}
@@ -607,12 +829,14 @@ export default function App() {
         </button>
       </div>
 
-      {/* Expense Modal (Create & Edit) matching image 2 */}
+      {/* Expense Modal (Create & Edit) */}
       <ExpenseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveExpense}
         editingExpense={editingExpense}
+        obras={obras}
+        activeObraId={activeObraId}
       />
 
       {/* Full-view Receipt Lightbox Modal */}
@@ -623,7 +847,7 @@ export default function App() {
         description={activeReceipt?.desc || ''}
       />
 
-      {/* Side Menu Drawer (Configurações & Sincronização) matching image */}
+      {/* Side Menu Drawer (Configurações & Gerenciamento de Obras) */}
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -634,11 +858,29 @@ export default function App() {
         onClearAllData={handleClearAllData}
         onExportCSV={handleExportCSV}
         grandTotal={grandTotal}
-        totalExpensesCount={expenses.length}
-        projectName={projectName}
-        onUpdateProjectName={handleUpdateProjectName}
+        totalExpensesCount={currentObraExpenses.length}
+        obras={obras}
+        activeObraId={activeObraId}
+        onSelectObra={handleSelectObra}
+        onAddObra={handleAddObra}
+        onRenameObra={handleRenameObra}
+        onDeleteObra={handleDeleteObra}
         budgetLimit={budgetLimit}
         onUpdateBudgetLimit={handleUpdateBudgetLimit}
+        allExpenses={expenses}
+      />
+
+      {/* Quick Obras Switcher Modal */}
+      <ObrasModal
+        isOpen={isObrasModalOpen}
+        onClose={() => setIsObrasModalOpen(false)}
+        obras={obras}
+        activeObraId={activeObraId}
+        onSelectObra={handleSelectObra}
+        onAddObra={handleAddObra}
+        onRenameObra={handleRenameObra}
+        onDeleteObra={handleDeleteObra}
+        expenses={expenses}
       />
 
       {/* Email / Password & Google Authentication Modal */}

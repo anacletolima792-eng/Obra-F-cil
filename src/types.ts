@@ -1,5 +1,14 @@
 export type ExpenseCategory = 'material' | 'mao_de_obra';
 
+export interface Obra {
+  id: string;
+  name: string;
+  budgetLimit?: number;
+  createdAt: string;
+  userId: string;
+  updatedAt?: string;
+}
+
 export interface Expense {
   id: string;
   description: string;
@@ -10,6 +19,7 @@ export interface Expense {
   userId: string;
   createdAt: string;
   updatedAt?: string;
+  obraId?: string;
 }
 
 export const INITIAL_IMAGE_EXPENSES: Omit<Expense, 'id' | 'userId' | 'createdAt'>[] = [];

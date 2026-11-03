@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Camera, Plus, Check, Trash2, Calendar, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Expense, ExpenseCategory, parseBRLInput, formatCurrencyBRL } from '../types';
+import { Expense, ExpenseCategory, Obra, parseBRLInput, formatCurrencyBRL } from '../types';
 
 interface ExpenseModalProps {
   isOpen: boolean;
@@ -11,8 +11,11 @@ interface ExpenseModalProps {
     category: ExpenseCategory;
     date: string;
     receiptUrl?: string;
+    obraId?: string;
   }) => Promise<void>;
   editingExpense?: Expense | null;
+  obras?: Obra[];
+  activeObraId?: string;
 }
 
 const MONTH_NAMES = [
@@ -63,11 +66,14 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
   onClose,
   onSave,
   editingExpense,
+  obras = [],
+  activeObraId,
 }) => {
   const [description, setDescription] = useState('');
   const [amountStr, setAmountStr] = useState('');
   const [category, setCategory] = useState<ExpenseCategory>('material');
   const [date, setDate] = useState('');
+  const [selectedObraId, setSelectedObraId] = useState<string>(activeObraId || (obras[0]?.id || ''));
   const [receiptUrl, setReceiptUrl] = useState<string | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -93,6 +99,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
       setDate(initialDate);
       setCalendarViewDate(parseDateString(initialDate));
       setReceiptUrl(editingExpense.receiptUrl);
+      setSelectedObraId(editingExpense.obraId || activeObraId || (obras[0]?.id || ''));
     } else {
       setDescription('');
       setAmountStr('');
@@ -101,10 +108,11 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
       setDate(today);
       setCalendarViewDate(new Date());
       setReceiptUrl(undefined);
+      setSelectedObraId(activeObraId || (obras[0]?.id || ''));
     }
     setErrorMessage('');
     setIsCalendarOpen(false);
-  }, [editingExpense, isOpen]);
+  }, [editingExpense, isOpen, activeObraId, obras]);
 
   // Input mask for Brazilian currency (BRL): automatically formats digits as typing
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -211,6 +219,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
         category,
         date: date.trim() || getTodayFormatted(),
         receiptUrl: receiptUrl || undefined,
+        obraId: selectedObraId || activeObraId,
       });
       onClose();
     } catch (err) {
@@ -252,6 +261,36 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
           {errorMessage && (
             <div className="bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs rounded-xl p-3 font-medium">
               {errorMessage}
+            </div>
+          )}
+
+          {/* Obra Destino (quando houver mais de 1 obra cadastrada) */}
+          {obras && obras.length > 1 && (
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+                <span>Obra para Construção</span>
+                <span className="text-[10px] text-amber-500 font-bold uppercase tracking-wider">
+                  Vincular a
+                </span>
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedObraId}
+                  onChange={(e) => setSelectedObraId(e.target.value)}
+                  className="w-full pl-4 pr-10 py-2.5 bg-[#f8fafc] dark:bg-[#0c1626] border border-slate-200 dark:border-[#223d66] rounded-xl text-slate-900 dark:text-white text-xs sm:text-sm font-bold focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer appearance-none"
+                >
+                  {obras.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      🏗️ {o.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 dark:text-slate-400">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           )}
 

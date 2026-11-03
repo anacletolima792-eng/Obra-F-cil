@@ -17,9 +17,10 @@ import {
   Moon,
 } from 'lucide-react';
 import { User as FirebaseUser } from 'firebase/auth';
-import { formatCurrencyBRL, parseBRLInput } from '../types';
+import { Obra, Expense, formatCurrencyBRL, parseBRLInput } from '../types';
 import { capitalizeWords } from './ExpenseModal';
 import { useTheme } from '../context/ThemeContext';
+import { ObrasManager } from './ObrasManager';
 
 function formatCentsToBRL(cents: number): string {
   return new Intl.NumberFormat('pt-BR', {
@@ -39,10 +40,15 @@ interface SidebarProps {
   onExportCSV: () => void;
   grandTotal: number;
   totalExpensesCount: number;
-  projectName: string;
-  onUpdateProjectName: (name: string) => void;
+  obras: Obra[];
+  activeObraId: string;
+  onSelectObra: (obraId: string) => void;
+  onAddObra: (name: string) => Promise<void> | void;
+  onRenameObra: (obraId: string, newName: string) => Promise<void> | void;
+  onDeleteObra: (obraId: string) => Promise<void> | void;
   budgetLimit: number;
   onUpdateBudgetLimit: (limit: number) => void;
+  allExpenses: Expense[];
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -55,18 +61,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onExportCSV,
   grandTotal,
   totalExpensesCount,
-  projectName,
-  onUpdateProjectName,
+  obras,
+  activeObraId,
+  onSelectObra,
+  onAddObra,
+  onRenameObra,
+  onDeleteObra,
   budgetLimit,
   onUpdateBudgetLimit,
+  allExpenses,
 }) => {
   const { theme, setTheme } = useTheme();
   const [editingBudget, setEditingBudget] = useState(false);
   const [tempBudget, setTempBudget] = useState(() =>
     budgetLimit > 0 ? formatCentsToBRL(Math.round(budgetLimit * 100)) : ''
   );
-  const [editingName, setEditingName] = useState(false);
-  const [tempName, setTempName] = useState(projectName);
+  const activeObra = obras.find((o) => o.id === activeObraId) || obras[0];
 
   const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -205,56 +215,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             )}
 
-            {/* SEÇÃO 2: Configurações da Obra */}
+            {/* SEÇÃO 2: Obras para Construção (Multi-Obra) */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                <Building className="w-3.5 h-3.5 text-amber-400" />
-                <span>Dados da Obra & Orçamento</span>
-              </h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <Building className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Obras para Construção ({obras.length})</span>
+                </h4>
+              </div>
 
-              <div className="bg-[#151f30] rounded-xl p-4 border border-slate-800 space-y-3.5">
-                {/* Nome da Obra */}
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                    Nome da Obra / Local
-                  </label>
-                  {editingName ? (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={tempName}
-                        onChange={(e) => setTempName(capitalizeWords(e.target.value))}
-                        autoCapitalize="words"
-                        autoCorrect="on"
-                        className="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-400"
-                        placeholder="Ex: Reforma da Casa, Lote 12..."
-                      />
-                      <button
-                        onClick={() => {
-                          onUpdateProjectName(capitalizeWords(tempName.trim()));
-                          setEditingName(false);
-                        }}
-                        className="px-2.5 py-1.5 bg-amber-500 text-slate-950 text-xs font-bold rounded-lg cursor-pointer"
-                      >
-                        Salvar
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between text-xs">
-                      <span className={projectName ? "font-bold text-white" : "text-slate-400 italic font-normal"}>
-                        {projectName || 'Não informado'}
-                      </span>
-                      <button
-                        onClick={() => {
-                          setTempName(projectName);
-                          setEditingName(true);
-                        }}
-                        className="text-amber-400 hover:underline cursor-pointer font-semibold"
-                      >
-                        {projectName ? 'Alterar' : 'Definir'}
-                      </button>
-                    </div>
-                  )}
+              {/* Exact Manager UI matching user screenshot */}
+              <ObrasManager
+                obras={obras}
+                activeObraId={activeObraId}
+                onSelectObra={onSelectObra}
+                onAddObra={onAddObra}
+                onRenameObra={onRenameObra}
+                onDeleteObra={onDeleteObra}
+                expenses={allExpenses}
+              />
+
+              {/* Teto de Orçamento da Obra Selecionada */}
+              <div className="bg-[#151f30] rounded-2xl p-4 border border-slate-800 space-y-3 mt-3">
+                <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Orçamento de: {activeObra?.name || 'Obra Ativa'}</span>
                 </div>
 
                 {/* Teto de Orçamento */}

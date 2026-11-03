@@ -35,6 +35,11 @@
           "description": "Firebase Auth UID of the owner",
           "maxLength": 128
         },
+        "obraId": {
+          "type": "string",
+          "description": "Identifier of the construction project (obra) this expense belongs to",
+          "maxLength": 128
+        },
         "createdAt": {
           "type": "string",
           "description": "Creation timestamp"
@@ -45,6 +50,37 @@
         }
       },
       "required": ["description", "amount", "category", "date", "userId", "createdAt"]
+    },
+    "Obra": {
+      "title": "Obra",
+      "description": "Represents a construction project or site managed by the user.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name or location of the construction project",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "budgetLimit": {
+          "type": "number",
+          "description": "Optional budget ceiling for this specific obra"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owner",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["name", "userId", "createdAt"]
     },
     "UserProfile": {
       "title": "UserProfile",
@@ -74,6 +110,10 @@
     "/users/{userId}/expenses/{expenseId}": {
       "schema": "Expense",
       "description": "Subcollection of expenses belonging strictly to the authenticated user."
+    },
+    "/users/{userId}/obras/{obraId}": {
+      "schema": "Obra",
+      "description": "Subcollection of construction projects/obras belonging strictly to the authenticated user."
     },
     "/users/{userId}": {
       "schema": "UserProfile",

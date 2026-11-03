@@ -8,6 +8,8 @@ interface HeaderProps {
   isSyncing?: boolean;
   onOpenSidebar: () => void;
   projectName?: string;
+  activeObraName?: string;
+  onOpenObrasModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,6 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   isSyncing,
   onOpenSidebar,
   projectName,
+  activeObraName,
+  onOpenObrasModal,
 }) => {
   return (
     <header className="bg-[#172a46] dark:bg-[#0f1b2d] text-white py-3.5 sm:py-4 px-3 sm:px-6 shadow-md border-b border-[#243e68] dark:border-[#1d3250] transition-colors">
@@ -52,19 +56,24 @@ export const Header: React.FC<HeaderProps> = ({
             </svg>
           </div>
 
-          {/* Brand Title & Project Name/Location below */}
+          {/* Brand Title & Active Obra Switcher */}
           <div className="flex flex-col justify-center min-w-0">
-            <h1 className="text-[21px] sm:text-[24px] font-black tracking-tight text-white leading-tight truncate">
+            <h1 className="text-[20px] sm:text-[23px] font-black tracking-tight text-white leading-tight truncate">
               Obra Fácil
             </h1>
             <button
-              onClick={onOpenSidebar}
-              title="Clique para alterar o nome da obra nas configurações"
-              className="flex items-center gap-1 text-[13px] sm:text-[14px] text-amber-400 font-semibold truncate hover:text-amber-300 transition-colors text-left cursor-pointer mt-0.5"
+              onClick={onOpenObrasModal || onOpenSidebar}
+              title="Clique para alternar ou cadastrar novas obras"
+              className="inline-flex items-center gap-1.5 text-[12px] sm:text-[13px] bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 hover:text-amber-200 px-2.5 py-0.5 rounded-lg font-bold truncate transition-all text-left cursor-pointer mt-1 max-w-[190px] sm:max-w-xs group active:scale-95 shadow-xs"
             >
-              <span className={`truncate max-w-[150px] sm:max-w-xs ${!projectName ? 'opacity-85 italic' : ''}`}>
-                {projectName || 'Nome da Obra / Local'}
-              </span>
+              <span className="truncate">{activeObraName || projectName || 'Minha Obra'}</span>
+              <svg
+                className="w-3.5 h-3.5 text-amber-400 shrink-0 group-hover:translate-y-0.5 transition-transform"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
             </button>
           </div>
         </div>
