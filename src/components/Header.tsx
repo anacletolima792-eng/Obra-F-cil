@@ -89,10 +89,10 @@ export const Header: React.FC<HeaderProps> = ({
                   <img
                     src={user.photoURL}
                     alt={user.displayName || 'Usuário'}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full ring-1.5 ring-amber-400 object-cover"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full ring-1.5 ring-slate-400 object-cover"
                   />
                 ) : (
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-amber-500 text-slate-900 font-bold text-xs sm:text-sm flex items-center justify-center">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center">
                     {(user.displayName || user.email || 'U')[0].toUpperCase()}
                   </div>
                 )}

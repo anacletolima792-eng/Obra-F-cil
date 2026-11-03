@@ -183,7 +183,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       className="w-11 h-11 rounded-full ring-2 ring-emerald-400 object-cover"
                     />
                   ) : (
-                    <div className="w-11 h-11 rounded-full bg-amber-500 text-slate-950 font-extrabold flex items-center justify-center text-base">
+                    <div className="w-11 h-11 rounded-full bg-slate-500 text-white font-extrabold flex items-center justify-center text-base">
                       {(user.displayName || user.email || 'U')[0].toUpperCase()}
                     </div>
                   )}

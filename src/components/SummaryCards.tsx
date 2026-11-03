@@ -49,7 +49,7 @@ export const SummaryCards: React.FC<SummaryCardsProps> = ({
             TOTAL
           </span>
         </div>
-        <div className="mt-1 sm:mt-1.5 text-xs min-[360px]:text-sm sm:text-lg font-black text-blue-400 dark:text-blue-400 tracking-tight whitespace-nowrap truncate">
+        <div className="mt-1 sm:mt-1.5 text-xs min-[360px]:text-sm sm:text-lg font-black text-white tracking-tight whitespace-nowrap truncate">
           {formatCurrencyBRL(grandTotal)}
         </div>
       </div>
