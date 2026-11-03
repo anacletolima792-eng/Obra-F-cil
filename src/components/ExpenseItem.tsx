@@ -25,11 +25,11 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           {/* Badge matching screenshot */}
           {isLabor ? (
-            <span className="inline-flex items-center gap-1 bg-[#fef3c7] dark:bg-amber-950/70 text-[#92400e] dark:text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/80 shadow-2xs">
+            <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-[#132238] text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-slate-300 dark:border-slate-300 shadow-2xs">
               Mão de Obra
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 bg-[#dbeafe] dark:bg-blue-950/70 text-[#1e40af] dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-200 dark:border-blue-800/80 shadow-2xs">
+            <span className="inline-flex items-center gap-1 bg-[#dbeafe] dark:bg-blue-950/70 text-[#1e40af] dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-blue-400 dark:border-blue-400 shadow-2xs">
               Material
             </span>
           )}

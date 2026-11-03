@@ -216,7 +216,7 @@ export const ObrasManager: React.FC<ObrasManagerProps> = ({
           disabled={!newObraName.trim() || isSubmitting}
           title="Adicionar Obra"
           aria-label="Adicionar Obra"
-          className="w-11 h-11 rounded-full bg-[#f59e0b] hover:bg-[#d97706] disabled:opacity-50 disabled:hover:bg-[#f59e0b] text-slate-950 flex items-center justify-center shrink-0 shadow-md active:scale-95 transition-all cursor-pointer"
+          className="w-11 h-11 rounded-full bg-slate-500 hover:bg-slate-400 disabled:opacity-50 disabled:hover:bg-slate-500 text-white flex items-center justify-center shrink-0 shadow-md active:scale-95 transition-all cursor-pointer border border-slate-400/50"
         >
           <Plus className="w-5 h-5 stroke-[2.8]" />
         </button>

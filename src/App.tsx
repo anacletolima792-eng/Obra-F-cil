@@ -803,7 +803,7 @@ export default function App() {
                   setEditingExpense(null);
                   setIsModalOpen(true);
                 }}
-                className="mt-4 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-xs cursor-pointer"
+                className="mt-4 inline-flex items-center gap-1.5 bg-slate-500 hover:bg-slate-400 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-xs cursor-pointer border border-slate-400/40"
               >
                 <Plus className="w-4 h-4" />
                 <span>Lançar Novo Gasto</span>
@@ -823,7 +823,7 @@ export default function App() {
           }}
           title="Lançar Novo Gasto"
           aria-label="Lançar Novo Gasto"
-          className="w-14 h-14 bg-[#f59e0b] hover:bg-[#d97706] text-slate-950 flex items-center justify-center rounded-full shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer border-2 border-amber-300 group"
+          className="w-14 h-14 bg-slate-500 hover:bg-slate-400 text-white flex items-center justify-center rounded-full shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer border-2 border-slate-300 dark:border-slate-400 group"
         >
           <Plus className="w-7 h-7 stroke-[3] group-hover:rotate-90 transition-transform" />
         </button>

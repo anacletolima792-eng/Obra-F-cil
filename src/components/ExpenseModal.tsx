@@ -320,7 +320,7 @@ export const ExpenseModal: React.FC<ExpenseModalProps> = ({
                 onClick={() => setCategory('mao_de_obra')}
                 className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all cursor-pointer ${
                   category === 'mao_de_obra'
-                    ? 'bg-[#fef3c7] dark:bg-amber-950/80 text-[#92400e] dark:text-amber-300 border-2 border-amber-400 dark:border-amber-500 shadow-xs'
+                    ? 'bg-slate-100 dark:bg-[#132238] text-blue-600 dark:text-blue-400 border-2 border-slate-300 dark:border-slate-300 shadow-xs'
                     : 'bg-[#f1f5f9] dark:bg-[#0c1626] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#223d66] hover:bg-slate-100 dark:hover:bg-[#162740]'
                 }`}
               >
