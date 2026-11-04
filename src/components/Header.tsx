@@ -30,11 +30,10 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="bg-[#172a46] dark:bg-[#0f1b2d] text-white pt-2.5 pb-2 sm:pt-3 sm:pb-2.5 px-3 sm:px-6 shadow-md border-b border-[#243e68] dark:border-[#1d3250] transition-colors">
       <div className="max-w-4xl mx-auto flex flex-col gap-2">
         
-        {/* Top row: Menu button + Brand Logo + Title + Project Name + User profile */}
-        <div className="flex items-center justify-between gap-2.5 sm:gap-4 flex-nowrap">
-          {/* Left: Menu button + Brand Logo + Title + Project Name */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 flex-1">
-            {/* Hamburger Menu button */}
+        {/* Top row: Menu button + Centered Title & Active Obra + User profile */}
+        <div className="relative flex items-center justify-between gap-2.5 sm:gap-4 flex-nowrap min-h-[48px]">
+          {/* Left: Hamburger Menu button */}
+          <div className="flex items-center shrink-0 z-10">
             <button
               onClick={onOpenSidebar}
               title="Abrir Menu e Configurações"
@@ -49,25 +48,18 @@ export const Header: React.FC<HeaderProps> = ({
                 <line x1="3" y1="18" x2="21" y2="18" strokeLinecap="round" />
               </svg>
             </button>
+          </div>
 
-            {/* App Logo */}
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden shadow-md shadow-black/40 shrink-0 border border-slate-600/60 flex items-center justify-center bg-slate-900 group">
-              <img
-                src="/assets/aistudio/image_9da5d764.png"
-                alt="Obra Fácil"
-                className="w-full h-full object-cover transition-transform group-hover:scale-105"
-              />
-            </div>
-
-            {/* Brand Title & Active Obra Switcher */}
-            <div className="flex flex-col justify-center min-w-0">
-              <h1 className="text-[20px] sm:text-[23px] font-black tracking-tight text-white leading-tight truncate">
+          {/* Center: Brand Title & Active Obra Switcher */}
+          <div className="absolute inset-x-0 mx-auto flex flex-col items-center justify-center text-center pointer-events-none max-w-[calc(100%-110px)] sm:max-w-[calc(100%-170px)] z-0">
+            <div className="pointer-events-auto flex flex-col items-center justify-center text-center min-w-0">
+              <h1 className="text-[20px] sm:text-[23px] font-black tracking-tight text-white leading-tight truncate text-center">
                 Obra Fácil
               </h1>
               <button
                 onClick={onOpenObrasModal || onOpenSidebar}
                 title="Clique para alternar ou cadastrar novas obras"
-                className="inline-flex items-center gap-1.5 text-[12px] sm:text-[13px] bg-slate-100 dark:bg-[#132238] hover:bg-slate-200 dark:hover:bg-[#182b47] border border-slate-300 dark:border-slate-300 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-2.5 py-0.5 rounded-full font-bold truncate transition-all text-left cursor-pointer mt-1 max-w-[190px] sm:max-w-xs group active:scale-95 shadow-2xs"
+                className="inline-flex items-center justify-center gap-1.5 text-[12px] sm:text-[13px] bg-slate-100 dark:bg-[#132238] hover:bg-slate-200 dark:hover:bg-[#182b47] border border-slate-300 dark:border-slate-300 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 px-2.5 py-0.5 rounded-full font-bold truncate transition-all text-center cursor-pointer mt-1 max-w-[190px] sm:max-w-xs group active:scale-95 shadow-2xs"
               >
                 <span className="truncate">{activeObraName || projectName || 'Minha Obra'}</span>
                 <svg
@@ -82,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           {/* Right: User avatar or quick action */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 z-10">
             {user ? (
               <div className="flex items-center shrink-0">
                 <button
@@ -117,13 +109,9 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Bottom line of this header area: TOTAL in one single line */}
         {grandTotal !== undefined && (
-          <div className="pt-2 border-t border-[#243e68]/80 dark:border-[#1d3250] flex items-center justify-between px-0.5">
-            <div className="flex items-center gap-1 sm:gap-1.5 text-slate-300 min-w-0">
-              <span className="text-xs sm:text-base shrink-0" role="img" aria-label="Total">📊</span>
-            </div>
-            <div className="text-xs min-[360px]:text-sm sm:text-lg font-black text-white tracking-tight whitespace-nowrap truncate">
+          <div className="pt-2 border-t border-[#243e68]/80 dark:border-[#1d3250] flex items-center justify-center px-0.5 text-center">
+            <div className="text-sm min-[360px]:text-base sm:text-xl font-black text-white tracking-tight whitespace-nowrap truncate text-center">
               {formatCurrencyBRL(grandTotal)}
             </div>
           </div>

@@ -25,17 +25,17 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
         <div className="flex items-center gap-2 flex-wrap">
           {/* Badge matching screenshot */}
           {isLabor ? (
-            <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-[#132238] text-blue-600 dark:text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-slate-300 dark:border-slate-300 shadow-2xs">
+            <span className="inline-flex items-center gap-1 bg-slate-100 dark:bg-[#132238] text-blue-600 dark:text-blue-400 text-[9px] font-bold px-2 py-0.5 rounded-full border-2 border-slate-300 dark:border-slate-300 shadow-2xs">
               Mão de Obra
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 bg-[#dbeafe] dark:bg-blue-950/70 text-[#1e40af] dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-blue-400 dark:border-blue-400 shadow-2xs">
+            <span className="inline-flex items-center gap-1 bg-[#dbeafe] dark:bg-blue-950/70 text-[#1e40af] dark:text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border-2 border-blue-400 dark:border-blue-400 shadow-2xs">
               Material
             </span>
           )}
 
           {/* Date */}
-          <span className="text-[11px] font-medium text-slate-400 dark:text-slate-400">
+          <span className="text-[10px] font-medium text-slate-400 dark:text-slate-400">
             {expense.date}
           </span>
 
@@ -43,7 +43,7 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
           {expense.receiptUrl && (
             <button
               onClick={() => onViewReceipt(expense.receiptUrl!, expense.description)}
-              className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold px-1.5 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[9px] font-semibold px-1.5 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800 transition-colors cursor-pointer"
               title="Ver foto do comprovante"
             >
               <ImageIcon className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
@@ -53,7 +53,7 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
         </div>
 
         {/* Description title */}
-        <h3 className="mt-0.5 text-sm sm:text-[15px] font-bold text-slate-800 dark:text-slate-100 leading-snug tracking-tight break-words">
+        <h3 className="mt-0.5 text-xs sm:text-[13px] font-bold text-slate-800 dark:text-slate-100 leading-snug tracking-tight break-words">
           {expense.description}
         </h3>
       </div>
@@ -61,7 +61,7 @@ export const ExpenseItem: React.FC<ExpenseItemProps> = ({
       {/* Right section: Amount and action buttons */}
       <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
         {/* Formatted amount */}
-        <span className="text-[13px] sm:text-sm font-bold text-slate-900 dark:text-white tracking-tight">
+        <span className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white tracking-tight">
           {formatCurrencyBRL(expense.amount)}
         </span>
 
