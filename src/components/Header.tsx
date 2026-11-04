@@ -27,8 +27,8 @@ export const Header: React.FC<HeaderProps> = ({
   grandTotal,
 }) => {
   return (
-    <header className="bg-[#172a46] dark:bg-[#0f1b2d] text-white pt-3 pb-2.5 sm:pt-3.5 sm:pb-3 px-3 sm:px-6 shadow-md border-b border-[#243e68] dark:border-[#1d3250] transition-colors">
-      <div className="max-w-4xl mx-auto flex flex-col gap-2.5">
+    <header className="bg-[#172a46] dark:bg-[#0f1b2d] text-white pt-2.5 pb-2 sm:pt-3 sm:pb-2.5 px-3 sm:px-6 shadow-md border-b border-[#243e68] dark:border-[#1d3250] transition-colors">
+      <div className="max-w-4xl mx-auto flex flex-col gap-2">
         
         {/* Top row: Menu button + Brand Logo + Title + Project Name + User profile */}
         <div className="flex items-center justify-between gap-2.5 sm:gap-4 flex-nowrap">
@@ -122,9 +122,6 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="pt-2 border-t border-[#243e68]/80 dark:border-[#1d3250] flex items-center justify-between px-0.5">
             <div className="flex items-center gap-1 sm:gap-1.5 text-slate-300 min-w-0">
               <span className="text-xs sm:text-base shrink-0" role="img" aria-label="Total">📊</span>
-              <span className="uppercase text-[9px] min-[360px]:text-[10px] sm:text-xs font-extrabold tracking-wider text-slate-200 truncate">
-                TOTAL
-              </span>
             </div>
             <div className="text-xs min-[360px]:text-sm sm:text-lg font-black text-white tracking-tight whitespace-nowrap truncate">
               {formatCurrencyBRL(grandTotal)}

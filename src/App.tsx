@@ -716,11 +716,12 @@ export default function App() {
 
         {/* Top Summary Cards and Histórico Toolbar pinned to top */}
         <div className="max-w-4xl w-full mx-auto px-3 sm:px-6 pt-1 pb-1.5 bg-[#f3f6f9] dark:bg-[#0b1320] transition-colors">
-          {/* Summary Cards: Material, Mão de Obra, Total */}
+          {/* Summary Cards: Material, Mão de Obra */}
           <SummaryCards
             materialTotal={materialTotal}
             laborTotal={laborTotal}
             grandTotal={grandTotal}
+            showTotalCard={false}
           />
 
           {/* Subheader: Quick search input and Category Filter with count */}
