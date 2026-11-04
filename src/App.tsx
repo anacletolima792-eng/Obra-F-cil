@@ -197,7 +197,7 @@ export default function App() {
             setObras([initialObra]);
             setActiveObraId(initialObra.id);
           } catch (e) {
-            console.error('Error creating default obra:', e);
+            handleFirestoreError(e, OperationType.CREATE, `users/${user.uid}/obras/obra_default`);
           }
         } else {
           const items: Obra[] = [];
@@ -711,6 +711,7 @@ export default function App() {
           projectName={projectName}
           activeObraName={activeObra?.name || 'Minha Obra'}
           onOpenObrasModal={() => setIsObrasModalOpen(true)}
+          grandTotal={grandTotal}
         />
 
         {/* Top Summary Cards and Histórico Toolbar pinned to top */}

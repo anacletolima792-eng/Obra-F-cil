@@ -57,6 +57,7 @@ service cloud.firestore {
         data.userId == request.auth.uid &&
         data.createdAt is string &&
         data.createdAt.size() <= 50 &&
+        (!('id' in data) || (data.id is string && data.id.size() <= 128)) &&
         (!('budgetLimit' in data) || (data.budgetLimit is number && data.budgetLimit >= 0)) &&
         (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50));
     }
@@ -92,14 +93,14 @@ service cloud.firestore {
         allow create: if isOwner(userId) &&
           isValidId(obraId) &&
           incoming().keys().hasAll(['name', 'userId', 'createdAt']) &&
-          incoming().keys().hasOnly(['name', 'userId', 'createdAt', 'budgetLimit', 'updatedAt']) &&
+          incoming().keys().hasOnly(['id', 'name', 'userId', 'createdAt', 'budgetLimit', 'updatedAt']) &&
           isValidObra(incoming(), userId);
         allow update: if isOwner(userId) &&
           isValidId(obraId) &&
           isValidObra(incoming(), userId) &&
           incoming().userId == existing().userId &&
           incoming().createdAt == existing().createdAt &&
-          incoming().diff(existing()).affectedKeys().hasOnly(['name', 'budgetLimit', 'updatedAt']);
+          incoming().diff(existing()).affectedKeys().hasOnly(['id', 'name', 'budgetLimit', 'updatedAt']);
         allow delete: if isOwner(userId) && isValidId(obraId);
       }
     }
