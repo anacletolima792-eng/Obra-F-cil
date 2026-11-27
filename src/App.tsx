@@ -39,6 +39,7 @@ import {
   Obra,
   INITIAL_IMAGE_EXPENSES,
   formatCurrencyBRL,
+  compareExpensesNewestFirst,
 } from './types';
 import { Header } from './components/Header';
 import { SummaryCards } from './components/SummaryCards';
@@ -156,6 +157,7 @@ export default function App() {
           const filtered = Array.isArray(parsed)
             ? parsed.filter((item: Expense) => !item.id?.startsWith('demo_'))
             : [];
+          filtered.sort(compareExpensesNewestFirst);
           setExpenses(filtered);
           localStorage.setItem('obra_facil_guest_expenses', JSON.stringify(filtered));
         } catch {
@@ -250,6 +252,7 @@ export default function App() {
           });
         });
 
+        items.sort(compareExpensesNewestFirst);
         setExpenses(items);
         setIsSyncing(false);
         setIsFirebaseConnected(true);
@@ -399,20 +402,22 @@ export default function App() {
   const laborCount = currentObraExpenses.filter((e) => e.category === 'mao_de_obra').length;
   const totalCount = currentObraExpenses.length;
 
-  // Filtered expenses for active obra
-  const filteredExpenses = currentObraExpenses.filter((e) => {
-    const matchesCategory =
-      selectedCategory === 'todos' ||
-      (selectedCategory === 'material' && e.category === 'material') ||
-      (selectedCategory === 'mao_de_obra' && e.category === 'mao_de_obra');
+  // Filtered expenses for active obra (sorted: latest launch on top down to the first launch)
+  const filteredExpenses = currentObraExpenses
+    .filter((e) => {
+      const matchesCategory =
+        selectedCategory === 'todos' ||
+        (selectedCategory === 'material' && e.category === 'material') ||
+        (selectedCategory === 'mao_de_obra' && e.category === 'mao_de_obra');
 
-    const matchesSearch =
-      !searchTerm.trim() ||
-      e.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.date.includes(searchTerm);
+      const matchesSearch =
+        !searchTerm.trim() ||
+        e.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        e.date.includes(searchTerm);
 
-    return matchesCategory && matchesSearch;
-  });
+      return matchesCategory && matchesSearch;
+    })
+    .sort(compareExpensesNewestFirst);
 
   // Obra Management Handlers
   const handleSelectObra = (obraId: string) => {
@@ -572,11 +577,13 @@ export default function App() {
     } else {
       // Guest local update
       if (editingExpense) {
-        const updated = expenses.map((item) =>
-          item.id === editingExpense.id
-            ? { ...item, ...expenseData, obraId: targetObraId, updatedAt: new Date().toISOString() }
-            : item
-        );
+        const updated = expenses
+          .map((item) =>
+            item.id === editingExpense.id
+              ? { ...item, ...expenseData, obraId: targetObraId, updatedAt: new Date().toISOString() }
+              : item
+          )
+          .sort(compareExpensesNewestFirst);
         setExpenses(updated);
         localStorage.setItem('obra_facil_guest_expenses', JSON.stringify(updated));
         showNotice('Gasto atualizado localmente!');
@@ -588,7 +595,7 @@ export default function App() {
           obraId: targetObraId,
           createdAt: new Date().toISOString(),
         };
-        const updated = [newExpense, ...expenses];
+        const updated = [newExpense, ...expenses].sort(compareExpensesNewestFirst);
         setExpenses(updated);
         localStorage.setItem('obra_facil_guest_expenses', JSON.stringify(updated));
         showNotice('Gasto adicionado localmente!');
